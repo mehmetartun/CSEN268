@@ -123,9 +123,3 @@ The solution is using `shrinkWrap` and `NeverScrollableScrollPhysics()` for scro
       ),
 ```
 
-
-```zsh
-════════ Exception caught by rendering library ═════════════════════════════════
-The following assertion was thrown during performResize():
-Vertical viewport was given unbounded height.
-```
