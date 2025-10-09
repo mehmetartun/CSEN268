@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'pages/column_examples_page.dart';
 import 'pages/example_page.dart';
+import 'pages/home_page.dart';
+import 'pages/listview_example_page.dart';
+import 'pages/single_child_scroll_view_and_list_view_error_page.dart';
+import 'pages/single_child_scroll_view_and_list_view_solution_example.dart';
+import 'pages/single_child_scroll_view_example_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,9 +37,23 @@ class MyApp extends StatelessWidget {
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: const ExamplePage(),
+      // home: const ExamplePage(),
+      initialRoute: "/",
+      routes: {
+        "/": (context) => const HomePage(),
+        "/columnExamples": (context) => const ColumnExamplesPage(),
+        "/listViewExample": (context) => const ListViewExamplePage(),
+        // "/centerExample": (context) => const CenterExamplePage(),
+        "/singleChildScrollViewExample": (context) =>
+            const SingleChildScrollViewExamplePage(),
+        "/singleChildScrollViewAndListViewErrorExample": (context) =>
+            const SingleChildScrollViewAndListViewErrorExamplePage(),
+        "/singleChildScrollViewAndListViewSolutionExample": (context) =>
+            const SingleChildScrollViewAndListViewSolutionExamplePage(),
+      },
     );
   }
 }
