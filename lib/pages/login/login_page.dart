@@ -13,7 +13,8 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginCubit(RepositoryProvider.of<AuthenticationRepository>(context)),
+      create: (context) =>
+          LoginCubit(RepositoryProvider.of<AuthenticationRepository>(context)),
       child: BlocBuilder<LoginCubit, LoginState>(
         builder: (context, state) {
           switch (state) {
@@ -21,7 +22,7 @@ class LoginPage extends StatelessWidget {
               return EmailPasswordView();
             case LoginError _:
               return ErrorView();
-                 case LoginSuccess _:
+            case LoginSuccess _:
               return SuccessView();
           }
         },

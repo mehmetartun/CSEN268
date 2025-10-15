@@ -9,3 +9,5 @@ The content in this repo follows the CSEN268 Spring25 Lecture at Santa Clara Uni
 Implementation of Form to input email and password
 - [Lecture 7 - 02](https://github.com/mehmetartun/CSEN268/tree/L07.02) 
 Implementation of Repository
+- [Lecture 8 - 01](https://github.com/mehmetartun/CSEN268/tree/L07.02) 
+Implementation of Bloc (Structure)
