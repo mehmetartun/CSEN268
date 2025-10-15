@@ -1,45 +1,44 @@
-# Lecture 7 - 02
+# Lecture 8 - 01
 
-To evaluate the **Repository Pattern** we crate a  abstract class `AuthenticationRepository`:
-```dart
-abstract class AuthenticationRepository {
-  Future<User> signIn({required String email, required String password});
-}
-```
+Here we implement the `BLoC` method of managing states.
 
-and create two separate implementations `FirebaseAuthenticationRepository` and `OktaAuthenticationRepository`. These both extend the abstract class `AuthenticationRepository`
+## MultiBlocProvider
+
+At the top of our code, before `MaterialApp` we place a `MultiBlocProvider` which will act as the `AuthenticationBloc`. 
 
 ```dart
-class FirebaseAuthenticationRepository extends AuthenticationRepository {
-  Future<void> someFirebaseSpecificMethod() async {
-    await Future.delayed(const Duration(seconds: 10), () {});
-  }
-
-  @override
-  Future<User> signIn({required String email, required String password}) async {
-    await someFirebaseSpecificMethod();
-    return User.createMockUser();
-  }
-}
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) =>
+              FirebaseAuthenticationRepository() as AuthenticationRepository,
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [BlocProvider(create: (context) => AuthenticationBloc())],
+        child: MaterialApp(...)
 ```
-The key here is that the abstract class specifies a method `signIn` which needs to be implemented by both repositories.
+where we also changed the `RepositoryProvider` to a `MultiRepositoryProvider` to be able to attach other repositories in the future.
 
-## Login Cubit
+##  Page to use the AuthenticationBloc
 
-The injection of the `AuthenticationRepository` to the `LoginCubit` is done via the constructor:
+We create a new page `SignInPage` which will use the `AuthenticationBloc`. This page creates a reference to the `AuthenticationBloc` via:
 ```dart
-class LoginCubit extends Cubit<LoginState> {
-  LoginCubit(this.authenticationRepository) : super(LoginInitial());
-  User? user;
-  final AuthenticationRepository authenticationRepository;
-  ...
-}
+    AuthenticationBloc authenticationBloc = BlocProvider.of<AuthenticationBloc>(
+      context,
+    );
 ```
-where the `User` variable is necessary to hold the return value from the `signIn` method.
+The rest of the flow will be implemented in the next phase. The `SignInPage` has a `BlocBuilder` which listens to the states of the `AuthenticationBloc`
+```dart 
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      builder: (context, state) {
+        switch (state) {
+          default:
+            return SignInWaitingView();
+        }
+      },
+    );
+```
+and currently we simply show a waiting view as the `default` case of the `switch`.
 
-When the `LoginCubit` is created in the `LoginPage` the `AuthenticationRepository` from the widget tree is injected as:
-```dart
-    return BlocProvider(
-      create: (context) => LoginCubit(RepositoryProvider.of<AuthenticationRepository>(context)),
-      child: BlocBuilder<LoginCubit, LoginState>(...)
-```
+
