@@ -11,3 +11,5 @@ Implementation of Form to input email and password
 Implementation of Repository
 - [Lecture 8 - 01](https://github.com/mehmetartun/CSEN268/tree/L07.02) 
 Implementation of Bloc (Structure)
+- [Lecture 8 - 02](https://github.com/mehmetartun/CSEN268/tree/L07.02) 
+Finalizing the Bloc (Structure)
