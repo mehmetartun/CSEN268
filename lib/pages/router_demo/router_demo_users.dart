@@ -1,7 +1,6 @@
 import 'package:csen268/widgets/user_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../blocs/authentication/authentication_bloc.dart';
 import '../../model/user.dart';
@@ -23,7 +22,7 @@ class RouterDemoUsers extends StatelessWidget {
               ...List.generate(3, (index) {
                 return UserListTile(user: User.createMockUser());
               }),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: FilledButton(
                   child: Text("Logout"),

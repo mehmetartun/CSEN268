@@ -20,7 +20,7 @@ class RouterDemoProfile extends StatelessWidget {
             children: [
               PrintRoute(),
               Text("Router Demo Profile"),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: FilledButton(
                   child: Text("Logout"),
@@ -32,7 +32,7 @@ class RouterDemoProfile extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
                   child: Text("Show Detail"),

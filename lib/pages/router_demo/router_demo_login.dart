@@ -1,7 +1,6 @@
 import 'package:csen268/widgets/print_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../blocs/authentication/authentication_bloc.dart';
 
@@ -24,7 +23,7 @@ class RouterDemoLogin extends StatelessWidget {
                 "to the AuthenticationBloc",
               ),
               SizedBox(height: 20),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: FilledButton(
                   child: Text("Login"),

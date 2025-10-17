@@ -1,12 +1,9 @@
-import 'package:csen268/pages/sign_in/sign_in_page.dart';
 import 'package:csen268/repositories/authentication/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'blocs/authentication/authentication_bloc.dart';
 import 'navigation/routerdemo.dart';
-import 'pages/home_page.dart';
-import 'pages/login/login_page.dart';
 
 void main() {
   runApp(const MyApp());
