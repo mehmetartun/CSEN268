@@ -32,46 +32,6 @@ class HomePage extends StatelessWidget {
                 Navigator.of(context).popAndPushNamed('/signInPage');
               },
             ),
-            ListTile(
-              title: const Text('Column Examples'),
-              onTap: () {
-                Navigator.pushNamed(context, '/columnExamples');
-              },
-            ),
-            ListTile(
-              title: const Text('ListView Example'),
-              onTap: () {
-                Navigator.pushNamed(context, '/listViewExample');
-              },
-            ),
-            ListTile(
-              title: const Text('SingleChildScrollView Example'),
-              onTap: () {
-                Navigator.pushNamed(context, '/singleChildScrollViewExample');
-              },
-            ),
-            ListTile(
-              title: const Text(
-                'SingleChildScrollView and ListView Error Example',
-              ),
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/singleChildScrollViewAndListViewErrorExample',
-                );
-              },
-            ),
-            ListTile(
-              title: const Text(
-                'SingleChildScrollView and ListView Solution Example',
-              ),
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/singleChildScrollViewAndListViewSolutionExample',
-                );
-              },
-            ),
           ],
         ),
       ),
