@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import '../pages/generic_page.dart';
 import '../pages/image_page.dart';
-import 'navigator_route.dart';
+import 'my_navigator_route.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: MyNavigatorRoute.home.path,
