@@ -55,5 +55,7 @@
 	<string>Used to capture audio for image picker plugin</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to demonstrate image picker plugin</string>
+	<key>NSContactsUsageDescription</key>
+	<string>To facilitate sharing with your contacts, we require access to contacts on your device.</string>
 </dict>
 </plist>
