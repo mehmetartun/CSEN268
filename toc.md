@@ -13,3 +13,5 @@ Implementation of Repository
 Implementation of Bloc (Structure)
 - [Lecture 8 - 02](https://github.com/mehmetartun/CSEN268/tree/L08.02) 
 Finalizing the Bloc (Structure)
+- [Lecture 8 - 03](https://github.com/mehmetartun/CSEN268/tree/L08.03) 
+Go Router
