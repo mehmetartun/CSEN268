@@ -1,8 +1,5 @@
-## Santa Clara University - CSEN268 Spring 2025
 
-[Table of Contents](/toc.md)
-
-### Lecture 9 - Part 3 - Flutter Contacts Implementation
+### Lecture 9 - Part 4 - Flutter Contacts Implementation
 
 In this part we add the following packages to the project
     flutter_contacts

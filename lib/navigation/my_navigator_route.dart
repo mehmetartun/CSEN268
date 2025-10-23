@@ -11,3 +11,5 @@ enum MyNavigatorRoute {
   final String path;
   final String name;
 }
+
+enum StandardEnum { large, medium, small }
