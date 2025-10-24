@@ -43,6 +43,7 @@ class AuthenticationBloc
         email: event.email,
         password: event.password,
       );
+
       emit(AuthenticationAuthenticated());
       return;
     } catch (e) {
