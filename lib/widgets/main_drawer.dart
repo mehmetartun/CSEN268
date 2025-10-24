@@ -41,6 +41,13 @@ class MainDrawer extends StatelessWidget {
               context.goNamed(MyNavigatorRoute.contacts.name);
             },
           ),
+          ListTile(
+            title: const Text('Database'),
+            onTap: () {
+              context.pop();
+              context.goNamed(MyNavigatorRoute.database.name);
+            },
+          ),
         ],
       ),
     );
