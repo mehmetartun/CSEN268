@@ -15,3 +15,23 @@ Implementation of Bloc (Structure)
 Finalizing the Bloc (Structure)
 - [Lecture 8 - 03](https://github.com/mehmetartun/CSEN268/tree/L08.03) 
 Go Router
+- [Lecture 8 - 03](https://github.com/mehmetartun/CSEN268/tree/L08.03) 
+Go Router
+- [Lecture 9 - 01](https://github.com/mehmetartun/CSEN268/tree/L09.01) 
+Enhanced enums and Images with conditional Imports
+- [Lecture 9 - 02](https://github.com/mehmetartun/CSEN268/tree/L09.02) 
+Permissions for Camera and Gallery
+- [Lecture 9 - 03](https://github.com/mehmetartun/CSEN268/tree/L09.03) 
+Google Maps
+- [Lecture 9 - 04](https://github.com/mehmetartun/CSEN268/tree/L09.04) 
+Contacts
+- [Lecture 9 - 05](https://github.com/mehmetartun/CSEN268/tree/L09.05) 
+More granular checks for Permissions in Maps
+- [Lecture 10 - 01](https://github.com/mehmetartun/CSEN268/tree/L10.01) 
+Firebase Firestore Database
+- [Lecture 10 - 02](https://github.com/mehmetartun/CSEN268/tree/L10.02) 
+Firebase Authentication
+- [Lecture 10 - 03](https://github.com/mehmetartun/CSEN268/tree/L10.03) 
+Firebase Authentication - sign Up
+
+

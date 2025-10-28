@@ -1,28 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class EmailPasswordView extends StatefulWidget {
-  const EmailPasswordView({
-    super.key,
-    required this.signInWithEmail,
-    required this.newUserRequest,
-  });
+class NewUserView extends StatefulWidget {
+  const NewUserView({super.key, required this.newUserWithEmail});
   final void Function({required String email, required String password})
-  signInWithEmail;
-  final void Function() newUserRequest;
+  newUserWithEmail;
 
   @override
-  State<EmailPasswordView> createState() => _EmailPasswordViewState();
+  State<NewUserView> createState() => _NewUserViewState();
 }
 
-class _EmailPasswordViewState extends State<EmailPasswordView> {
+class _NewUserViewState extends State<NewUserView> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  TextEditingController emailController = TextEditingController(
-    text: 'john@doe.com',
-  );
-  TextEditingController passwordController = TextEditingController(
-    text: 'topsecret',
-  );
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   String? email;
   String? password;
 
@@ -43,12 +34,7 @@ class _EmailPasswordViewState extends State<EmailPasswordView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Login Page"),
-        actions: [
-          FilledButton(child: Text("New"), onPressed: widget.newUserRequest),
-        ],
-      ),
+      appBar: AppBar(title: Text("New User Page")),
       body: Center(
         child: Form(
           key: formKey,
@@ -89,7 +75,7 @@ class _EmailPasswordViewState extends State<EmailPasswordView> {
                   onPressed: () {
                     if (formKey.currentState?.validate() ?? false) {
                       formKey.currentState?.save();
-                      widget.signInWithEmail(
+                      widget.newUserWithEmail(
                         email: email!,
                         password: password!,
                       );
