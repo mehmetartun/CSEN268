@@ -13,7 +13,10 @@ class DatabaseCubit extends Cubit<DatabaseState> {
 
   Future<void> getUsers() async {
     var qs = await db.collection('users').get();
-    users = qs.docs.map((doc) => User.fromMap(doc.data())).toList();
+    users = qs.docs.map((doc) {
+      print(doc.data());
+      return User.fromMap(doc.data());
+    }).toList();
   }
 
   void init() async {
