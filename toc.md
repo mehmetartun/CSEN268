@@ -37,4 +37,6 @@ Firebase Authentication - sign Up
 Adding a theme
 - [Lecture 11 - 02](https://github.com/mehmetartun/CSEN268/tree/L11.02) 
 Changing theme
+- [Lecture 11 - 03](https://github.com/mehmetartun/CSEN268/tree/L11.03) 
+Adding Brightness Selector
 

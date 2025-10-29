@@ -1,5 +1,6 @@
 import 'package:csen268/blocs/authentication/authentication_bloc.dart';
 import 'package:csen268/navigation/my_navigator_route.dart';
+import 'package:csen268/widgets/brightness_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -77,6 +78,10 @@ class MainDrawer extends StatelessWidget {
                 ).add(AuthenticationSignOutEvent());
               },
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: BrightnessSelector(),
           ),
         ],
       ),
