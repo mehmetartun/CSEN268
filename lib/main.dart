@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'blocs/authentication/authentication_bloc.dart';
 import 'firebase_options.dart';
 import 'navigation/router.dart';
+import 'theme/cubit/theme_cubit.dart';
 import 'theme/theme.dart';
 import 'theme/util.dart';
 
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
     final authenticationRepository =
         FirebaseAuthenticationRepository() as AuthenticationRepository;
     final authenticationBloc = AuthenticationBloc(authenticationRepository);
+    final themeCubit = ThemeCubit();
 
     MaterialTheme materialTheme = MaterialTheme(
       createTextTheme(context, 'Roboto', 'Roboto Condensed'),
@@ -35,16 +37,23 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(create: (context) => authenticationRepository),
       ],
       child: MultiBlocProvider(
-        providers: [BlocProvider(create: (context) => authenticationBloc)],
-        child: MaterialApp.router(
-          title: 'CSEN 268 Fall 2025',
-          theme: materialTheme.light(),
-          darkTheme: materialTheme.dark(),
-          highContrastDarkTheme: materialTheme.darkHighContrast(),
-          highContrastTheme: materialTheme.lightHighContrast(),
-          themeMode: ThemeMode.system,
-          debugShowCheckedModeBanner: false,
-          routerConfig: router,
+        providers: [
+          BlocProvider(create: (context) => authenticationBloc),
+          BlocProvider(create: (context) => themeCubit),
+        ],
+        child: BlocBuilder<ThemeCubit, ThemeState>(
+          builder: (context, state) {
+            return MaterialApp.router(
+              title: 'CSEN 268 Fall 2025',
+              theme: materialTheme.light(),
+              darkTheme: materialTheme.dark(),
+              highContrastDarkTheme: materialTheme.darkHighContrast(),
+              highContrastTheme: materialTheme.lightHighContrast(),
+              themeMode: state.themeMode,
+              debugShowCheckedModeBanner: false,
+              routerConfig: router,
+            );
+          },
         ),
       ),
     );

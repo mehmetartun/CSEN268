@@ -33,5 +33,8 @@ Firebase Firestore Database
 Firebase Authentication
 - [Lecture 10 - 03](https://github.com/mehmetartun/CSEN268/tree/L10.03) 
 Firebase Authentication - sign Up
-
+- [Lecture 11 - 01](https://github.com/mehmetartun/CSEN268/tree/L11.01) 
+Adding a theme
+- [Lecture 11 - 02](https://github.com/mehmetartun/CSEN268/tree/L11.02) 
+Changing theme
 
