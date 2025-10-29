@@ -39,4 +39,9 @@ Adding a theme
 Changing theme
 - [Lecture 11 - 03](https://github.com/mehmetartun/CSEN268/tree/L11.03) 
 Adding Brightness Selector
+- [Lecture 11 - 04](https://github.com/mehmetartun/CSEN268/tree/L11.04) 
+Firebase Cloud Messaging
+- [Lecture 11 - 05](https://github.com/mehmetartun/CSEN268/tree/L11.05) 
+Firebase In-App Messaging
+
 
