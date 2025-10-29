@@ -1,125 +1,146 @@
 
-# Lecture 11 - 04 Messaging
+# Lecture 11 - 05 In-App Messaging and Notifications Bloc
 
-## Steps to implement
 
-1. Add firebase cloud messaging by
-```zsh
-flutter pub add firebase_messaging
-```
-2. Create reference to cloud messaging in `main()`
+
+In this part we set up a `bloc` to handle incoming messages.
+
+In this part we implement a Notifications Bloc which handles the messages coming into the platform. The event handlers correspond to three event types in [notifications_bloc.dart](/lib/blocs/notifications/bloc/notifications_bloc.dart):
+
 ```dart
-final messaging = FirebaseMessaging.instance;
+    on<NotificationsEvent>((event, emit) {
+      // TODO: implement event handler
+    });
+    on<NotificationsOnMessageEvent>((event, emit) {
+      emit(NotificationsReceivedState(
+          message: event.message,
+          notificationType: NotificationType.onMessage));
+    });
+    on<NotificationsOnMessageOpenedAppEvent>((event, emit) {
+      emit(NotificationsReceivedState(
+          message: event.message,
+          notificationType: NotificationType.onMessageOpenedApp));
+    });
+    on<NotificationsOnBackgroundMessageEvent>((event, emit) {
+      emit(NotificationsReceivedState(
+          message: event.message,
+          notificationType: NotificationType.onBackgroundMessage));
+    });
 ```
-3. Request permission from the host device
+These three event types are created by the following sources:
 ```dart
-  final settings = await messaging.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
+  void init() async {
+    messageOpenedAppSubscription =
+        FirebaseMessaging.onMessageOpenedApp.listen((message) {});
+
+    messageSubscription = FirebaseMessaging.onMessage.listen((message) {
+      print("message");
+      add(NotificationsOnMessageEvent(message: message));
+    });
+
+    RemoteMessage? message =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (message != null) {
+      add(NotificationsOnBackgroundMessageEvent(message: message));
+    }
+  }
 ```
-4. Go to **Project Settings > Cloud Messaging** and create a Web Push Key.
-<img src="/assets/images/GenerateVapidKey_1.png" alt="Generate VAPID Key - 1" width="600">
-<img src="/assets/images/GenerateVapidKey_1.png" alt="Generate VAPID Key - 2" width="600">
-
-
-5. Add your `VAPID Key` to be able to push to Web.
+Note that the subscriptions are defined by:
 ```dart
-const vapidKey = "<YOUR_PUBLIC_VAPID_KEY_HERE>"
+  StreamSubscription<RemoteMessage>? messageSubscription;
+  StreamSubscription<RemoteMessage>? messageOpenedAppSubscription;
 ```
-6. Get your messaging token. This is device specific and you should be saving this. It will not change whilst the app is installed on the device. However, you can always check this token and save it to your server everytime the client launches the app, if it has changed. Wrap it in a `try/catch` so we can run the app on iOS simulator as well where Firebase Cloud Messaging doesn't work.
+and need to be cancelled on close of the bloc:
 ```dart
-String? token;
+ @override
+  Future<void> close() {
+    // TODO: implement close
+    messageSubscription?.cancel();
+    messageOpenedAppSubscription?.cancel();
+    return super.close();
+  }
+```
 
-if (DefaultFirebaseOptions.currentPlatform == DefaultFirebaseOptions.web) {
-  token = await messaging.getToken(
-    vapidKey: vapidKey,
-  );
-} else {
-  try {
-    token = await messaging.getToken();
-  } catch (e) {
-    print("Error getting token $e");
+## Displaying messages
+
+Now that we are catcing messages from Firebase, how do we display them? In [main.dart](/lib/main.dart) the `build()` method of `MyApp()` is of this form:
+```dart
+  Widget build(BuildContext context) {
+    return RepositoryProvider(
+      ...
+      child: BlocProvider(
+        ... // create the bloc
+        child: MaterialApp(
+            ...
+            builder: (context, child) {
+              ...
+              return BlocListener<NotificationsBloc, NotificationsState>(
+                listener: (context, state) async {
+                  if (state is NotificationsReceivedState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        ... // Show message here
+                      ),
+                    );
+                  }
+                },
+                child: _child,
+              );
+            },
+            ...
+      ),
+    );
+  }
+```
+Here the `build()` method of the `MaterialApp` takes a child widget (normally the page that the Navigator presents to MaterialApp) and displays it. However, we interfere with this `build()` method and before rendering the `child` we wrap the child with a `BlocListener`. This gives us the ability to access the `child`, i.e. currently rendered page in the `MaterialApp`, and display a `SnackBar` in it's `context`.
+
+The full implementation is below:
+```dart
+class MyApp extends StatelessWidget {
+  MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return RepositoryProvider(
+      create: (context) {
+        return (OktaAuthenticationRepository() as AuthenticationRepository);
+      },
+      child: BlocProvider(  // We create the bloc here
+        create: (context) => NotificationsBloc()..init(), // initialize it here with the listeners
+        child: MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            builder: (context, child) { // we override the default build method 
+              Widget _child = child ?? Container();
+              return BlocListener<NotificationsBloc, NotificationsState>( // wrap a BlocListener around the child
+                listener: (context, state) async {
+                  if (state is NotificationsReceivedState) {
+                    ScaffoldMessenger.of(context).showSnackBar( // we access the ScaffoldMessenger of the child
+                      SnackBar(                                 // and show the Snackbar
+                        behavior: SnackBarBehavior.floating,
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                state.message.notification?.title ?? "<title>"),
+                            Text(state.message.notification?.body ?? "<body>"),
+                            Text("Type: ${state.notificationType.name}"),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: _child,
+              );
+            },
+            home: MessagingPage()),
+      ),
+    );
   }
 }
-print("Messaging token: $token");
 ```
-7. Create the listener for messages while the app is open:
-```dart
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Handling a foreground message: ${message.messageId}');
-    print('Message data: ${message.data}');
-    print('Message notification: ${message.notification?.title}');
-    print('Message notification: ${message.notification?.body}');
-    ... // Do whatever you need to do with this message
-  });
-```
-8. Create the function that checks messages that were received while the app is closed:
-```dart
-FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-```
-and create the function `_firebaseMessagingBackgroundHandler` above `main()`
-```dart
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("Handling a background message: ${message.messageId}");
-  print('Message data: ${message.data}');
-  print('Message notification: ${message.notification?.title}');
-  print('Message notification: ${message.notification?.body}');
-}
-```
-> Note here we call `Firebase.initializeApp()` because when a message is received while the App is closed, in order to process it, Firebase needs to be initialized.
-
-## Testing messaging
-
-1. Run on an Android device
-2. Go to **Messaging** in Firebase Console. 
-3. Click **New Campaign**
-4. Select **Notification**
-5. Add Title and Body
-<img src="/assets/images/TestNotification_1.png" alt="Test Notification" width="600">
-6. Click on **Send Test Message** and enter the token you read from the page by copying to Clipboard.
-<img src="/assets/images/TestNotification_4.png" alt="Copy Token" width="350">
-<img src="/assets/images/TestNotification_2.png" alt="Send Test" width="600">
-<img src="/assets/images/TestNotification_3.png" alt="Send Test2" width="600">
-7. You should now see the notification in your **Debug Console**
-```text
-D/FLTFireMsgReceiver( 9693): broadcast received for message
-I/flutter ( 9693): Handling a foreground message: 0:1730248935174495%bd986069bd986069
-I/flutter ( 9693): Message data: {}
-I/flutter ( 9693): Message notification:<Notification Title>
-I/flutter ( 9693): Message notification: <Notification Body>
-```
-
-## Additional Configuration for Flutter Web
-Flutter Web requires a service worker. This file is placed in the [Web](/web/) folder of the project [firebase-messaging-sw.js](/web/firebase-messaging-sw.js).
-```javascript
-
-importScripts("https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js");
-
-const firebaseConfig = {
-   apiKey: 'api-key',
-   authDomain: 'project-id.firebaseapp.com',
-   projectId: 'project-id',
-   storageBucket: 'project-id.appspot.com',
-   messagingSenderId: 'sender-id',
-   appId: 'app-id',
-   measurementId: 'G-measurement-id',
- };
-
-firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
-
-// todo Set up background message handler
-messaging.onBackgroundMessage((message) => {
- console.log("onBackgroundMessage", message);
-});
-```
-
-

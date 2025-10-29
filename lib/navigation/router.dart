@@ -1,3 +1,4 @@
+import 'package:csen268/pages/messaging_page.dart';
 import 'package:csen268/pages/sign_in/sign_in_page.dart';
 import 'package:go_router/go_router.dart';
 
@@ -40,6 +41,11 @@ final GoRouter router = GoRouter(
           path: MyNavigatorRoute.signIn.path,
           name: MyNavigatorRoute.signIn.name,
           builder: (context, state) => SignInPage(),
+        ),
+        GoRoute(
+          path: MyNavigatorRoute.messaging.path,
+          name: MyNavigatorRoute.messaging.name,
+          builder: (context, state) => MessagingPage(),
         ),
       ],
     ),
