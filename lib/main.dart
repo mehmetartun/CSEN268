@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'blocs/authentication/authentication_bloc.dart';
+import 'blocs/notifications/bloc/notifications_bloc.dart';
 import 'firebase_options.dart';
 import 'navigation/router.dart';
 import 'theme/cubit/theme_cubit.dart';
@@ -85,6 +86,7 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(create: (context) => authenticationBloc),
           BlocProvider(create: (context) => themeCubit),
+          BlocProvider(create: (context) => NotificationsBloc()..init()),
         ],
         child: BlocBuilder<ThemeCubit, ThemeState>(
           builder: (context, state) {
@@ -97,6 +99,34 @@ class MyApp extends StatelessWidget {
               themeMode: state.themeMode,
               debugShowCheckedModeBanner: false,
               routerConfig: router,
+              builder: (context, child) {
+                Widget _child = child ?? Container();
+                return BlocListener<NotificationsBloc, NotificationsState>(
+                  listener: (context, state) async {
+                    if (state is NotificationsReceivedState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                state.message.notification?.title ?? "<title>",
+                              ),
+                              Text(
+                                state.message.notification?.body ?? "<body>",
+                              ),
+                              Text("Type: ${state.notificationType.name}"),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: _child,
+                );
+              },
             );
           },
         ),
