@@ -2,6 +2,7 @@ import 'package:csen268/pages/messaging_page.dart';
 import 'package:csen268/pages/sign_in/sign_in_page.dart';
 import 'package:go_router/go_router.dart';
 
+import '../pages/alert_page.dart';
 import '../pages/contacts/contacts_page.dart';
 import '../pages/database/database_page.dart';
 import '../pages/generic_page.dart';
@@ -46,6 +47,11 @@ final GoRouter router = GoRouter(
           path: MyNavigatorRoute.messaging.path,
           name: MyNavigatorRoute.messaging.name,
           builder: (context, state) => MessagingPage(),
+        ),
+        GoRoute(
+          path: MyNavigatorRoute.dialogs.path,
+          name: MyNavigatorRoute.dialogs.name,
+          builder: (context, state) => AlertPage(),
         ),
       ],
     ),
