@@ -93,13 +93,13 @@ class MainDrawer extends StatelessWidget {
               context.goNamed(MyNavigatorRoute.streamBuilder.name);
             },
           ),
-          // ListTile(
-          //   title: const Text('Shimmer'),
-          //   onTap: () {
-          //     context.pop();
-          //     context.goNamed(MyNavigatorRoute.shimmer.name);
-          //   },
-          // ),
+          ListTile(
+            title: const Text('Shimmer'),
+            onTap: () {
+              context.pop();
+              context.goNamed(MyNavigatorRoute.shimmer.name);
+            },
+          ),
           Container(
             width: double.infinity,
             padding: EdgeInsets.all(20),
