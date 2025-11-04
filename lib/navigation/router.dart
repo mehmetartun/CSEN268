@@ -1,6 +1,7 @@
 import 'package:csen268/pages/future_builder_page.dart';
 import 'package:csen268/pages/messaging_page.dart';
 import 'package:csen268/pages/sign_in/sign_in_page.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../pages/alert_page.dart';
@@ -9,6 +10,7 @@ import '../pages/database/database_page.dart';
 import '../pages/generic_page.dart';
 import '../pages/image_page.dart';
 import '../pages/map_page.dart';
+import '../pages/stream_builder_page.dart';
 import 'my_navigator_route.dart';
 
 final GoRouter router = GoRouter(
@@ -62,7 +64,7 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: MyNavigatorRoute.streamBuilder.path,
           name: MyNavigatorRoute.streamBuilder.name,
-          builder: (context, state) => AlertPage(),
+          builder: (context, state) => StreamBuilderPage(),
         ),
         GoRoute(
           path: MyNavigatorRoute.shimmer.path,
