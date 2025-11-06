@@ -1,4 +1,5 @@
 import 'package:csen268/pages/future_builder_page.dart';
+import 'package:csen268/pages/in_app_web_view_page.dart';
 import 'package:csen268/pages/messaging_page.dart';
 import 'package:csen268/pages/shimmer_future_builder_page.dart';
 import 'package:csen268/pages/sign_in/sign_in_page.dart';
@@ -77,6 +78,11 @@ final GoRouter router = GoRouter(
           path: MyNavigatorRoute.webView.path,
           name: MyNavigatorRoute.webView.name,
           builder: (context, state) => WebViewPage(),
+        ),
+        GoRoute(
+          path: MyNavigatorRoute.inAppWebView.path,
+          name: MyNavigatorRoute.inAppWebView.name,
+          builder: (context, state) => InAppWebViewPage(),
         ),
       ],
     ),
