@@ -1,45 +1,29 @@
+# Lecture 15 -  Step 3 - Event Triggers
 
-# Lecture 15 -  Step 2 - Calling Cloud functions From the App
-
-
-## Calling functions
-The method to call the functions from the app is via:
-```dart
-  final HttpsCallable helloWorldCall = FirebaseFunctions.instance.httpsCallable(
-    'helloWorldCall',
-  );
-```
-
-## Calling a database function
-
-
-declaring the callable function in Flutter. Then the call is made by passing a `data` map to the callable function:
-```dart
-final HttpsCallable helloWorldCall = 
-  FirebaseFunctions.instance.httpsCallable(
-                  'addDataCall',
-                );
-HttpsCallableResult result = await addDataCall.call({
-                  'collection': 'function_test',
-                  'map': {'firstName': 'John', 'lastName': 'Doe'},
-                });
-```
-
-The result that comes back has a property called `data` which contains the returned value.
-
-On the functions side, we initialize the app to connect to Firestore
+In this section we implemented the event trigger due to Firestore database document creation. We need to import:
 ```javascript
-initializeApp();
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 ```
+in order to use this function.
 
-To connect to Firestore we call:
+Setting up the trigger is done first by creating this function and then deploying it.
 ```javascript
-  var collection = request.data['collection'];
-  var map = request.data['map'];
-  var documentReference = await getFirestore().collection(collection).add(map);
+exports.onUserCreated = onDocumentCreated("/function_test/{userId}" , async (event)=>{
+  await getFirestore().collection('log_test').add(
+    {
+      'userId':event.params.userId,
+      'createTime':event.data.createTime,
+    }
+  )
+});
 ```
+This matches any document with a path `/function_test/{userId}` and whenever a document with this pattern is created, it triggers this function. In turn we can act on this data. The `userId` in the **pattern** `"/function_test/{userId}"` is  a property of the `event.params` object.
 
-To write data (in this case `map`) to the given collection as a new document. Returned documentReference can then be used if necessary.
-
-
-
+# Deploying
+When first time deploying triggered function you may get this error:
+```zsh
+⚠  functions: Since this is your first time using 2nd gen functions, we need a little bit longer to finish setting everything up. Retry the deployment in a few minutes.
+⚠  functions:  failed to create function projects/csen268-f25/locations/us-central1/functions/onUserCreated
+Failed to create function projects/csen268-f25/locations/us-central1/functions/onUserCreated
+```
+Just follow the instructions and wait for a few minutes before deploying again.

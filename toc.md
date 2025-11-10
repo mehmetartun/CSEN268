@@ -61,3 +61,5 @@ Navigation Delegate
 Firebase Cloud Functions Setup
 - [Lecture 15 - 02](https://github.com/mehmetartun/CSEN268/tree/L15.02) 
 Creating Functions and Calling from App
+- [Lecture 15 - 03](https://github.com/mehmetartun/CSEN268/tree/L15.03) 
+Firestore Triggers
