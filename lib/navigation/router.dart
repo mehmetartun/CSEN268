@@ -1,5 +1,6 @@
 import 'package:csen268/pages/functions_demo_page.dart';
 import 'package:csen268/pages/future_builder_page.dart';
+import 'package:csen268/pages/image_upload_page.dart';
 import 'package:csen268/pages/in_app_web_view_page.dart';
 import 'package:csen268/pages/messaging_page.dart';
 import 'package:csen268/pages/shimmer_future_builder_page.dart';
@@ -29,6 +30,11 @@ final GoRouter router = GoRouter(
           path: MyNavigatorRoute.images.path,
           name: MyNavigatorRoute.images.name,
           builder: (context, state) => ImagePage(),
+        ),
+        GoRoute(
+          path: MyNavigatorRoute.imageUpload.path,
+          name: MyNavigatorRoute.imageUpload.name,
+          builder: (context, state) => ImageUploadPage(),
         ),
         GoRoute(
           path: MyNavigatorRoute.functionsDemo.path,

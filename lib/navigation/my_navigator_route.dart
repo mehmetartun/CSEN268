@@ -3,6 +3,7 @@
 enum MyNavigatorRoute {
   home("/", "home"),
   images("images", "images"),
+  imageUpload("imageUpload", "imageUpload"),
   map("map", "map"),
   contacts("contacts", "contacts"),
   signIn("signIn", "signIn"),
