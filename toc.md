@@ -57,3 +57,7 @@ WebView
 In App WebView
 - [Lecture 14 - 03](https://github.com/mehmetartun/CSEN268/tree/L14.03) 
 Navigation Delegate
+- [Lecture 15 - 01](https://github.com/mehmetartun/CSEN268/tree/L15.01) 
+Firebase Cloud Functions Setup
+- [Lecture 15 - 02](https://github.com/mehmetartun/CSEN268/tree/L15.02) 
+Creating Functions and Calling from App

@@ -27,15 +27,15 @@ void main() async {
   print(await FirebaseInstallations.instance.getId());
 
   final messaging = FirebaseMessaging.instance;
-  final settings = await messaging.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
+  // final settings = await messaging.requestPermission(
+  //   alert: true,
+  //   announcement: false,
+  //   badge: true,
+  //   carPlay: false,
+  //   criticalAlert: false,
+  //   provisional: false,
+  //   sound: true,
+  // );
 
   final vapidKey =
       "BEfe0Y4f84mk24QOgcVfbqCunLyG7Y20p8nPgjURHvMX1o8h1Uceue9H3ptIbQQLHSiB1FLyIYhW3bEGJzQYJ-Q";

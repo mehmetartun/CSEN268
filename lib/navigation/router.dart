@@ -1,3 +1,4 @@
+import 'package:csen268/pages/functions_demo_page.dart';
 import 'package:csen268/pages/future_builder_page.dart';
 import 'package:csen268/pages/in_app_web_view_page.dart';
 import 'package:csen268/pages/messaging_page.dart';
@@ -28,6 +29,11 @@ final GoRouter router = GoRouter(
           path: MyNavigatorRoute.images.path,
           name: MyNavigatorRoute.images.name,
           builder: (context, state) => ImagePage(),
+        ),
+        GoRoute(
+          path: MyNavigatorRoute.functionsDemo.path,
+          name: MyNavigatorRoute.functionsDemo.name,
+          builder: (context, state) => FunctionsDemoPage(),
         ),
         GoRoute(
           path: MyNavigatorRoute.map.path,
