@@ -63,3 +63,5 @@ Firebase Cloud Functions Setup
 Creating Functions and Calling from App
 - [Lecture 15 - 03](https://github.com/mehmetartun/CSEN268/tree/L15.03) 
 Firestore Triggers
+- [Lecture 15 - 04](https://github.com/mehmetartun/CSEN268/tree/L15.04) 
+Firebase Storage

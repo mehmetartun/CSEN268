@@ -1,4 +1,5 @@
 import 'package:file_saver/file_saver.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SaveImage {
@@ -11,5 +12,13 @@ class SaveImage {
       mimeType: MimeType.jpeg,
     );
     return "OK";
+  }
+
+  static Future<String?> uploadImageToStorage({
+    required XFile file,
+    required Reference storageReference,
+    void Function(double)? progressCallback,
+  }) async {
+    return null;
   }
 }
