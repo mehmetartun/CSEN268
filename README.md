@@ -1,24 +1,23 @@
-# Lecture 14 - Flutter Web, WebView 
+# Lecture 15 -  Step 1 - Cloud Functions Installed and Run
 
-## Navigation Delegate
-With `NavigationDelegate` one can prevent certain websites being visited.
+Installed Cloud Functions with
 ```zsh
-  @override
-  void initState() {
-    controller = TextEditingController(text: "google.com");
-    webViewController = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-          NavigationDelegate(onNavigationRequest: (request) {
-        if (request.url.contains("youtube")) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("This destination is not allowed")));
-          return NavigationDecision.prevent;
-        }
-        return NavigationDecision.navigate;
-      }));
-    super.initState();
-  }
+firebase init
 ```
-You can modify this also to ensure that customer stays in your domain.
+and created `google_service_account.json` giving us the keys to access Firebase. This is added to gitignore along with node modules:
+```zsh
+**/node_modules
+**/google_service_account.json
+```
+
+## Deploying functions
+```zsh
+firebase deploy --only functions
+```
+
+We can then call the function at the link provided:
+```
+https://us-central1-csen268-f25.cloudfunctions.net/helloWorld
+```
+
 
