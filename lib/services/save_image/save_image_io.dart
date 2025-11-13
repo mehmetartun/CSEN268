@@ -24,7 +24,7 @@ class SaveImage {
     required Reference storageReference,
     void Function(double)? progressCallback,
   }) async {
-    await storageReference.putFile(File(file.path));
+    // await storageReference.putFile(File(file.path));
     UploadTask task = storageReference.putFile(File(file.path));
     if (progressCallback != null) {
       task.snapshotEvents.listen((event) {

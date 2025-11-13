@@ -55,7 +55,6 @@ class _FunctionsDemoPageState extends State<FunctionsDemoPage> {
               onPressed: () async {
                 HttpsCallableResult result = await getDataCall.call({
                   'path': path,
-                  'map': {'firstName': 'John', 'lastName': 'Doe'},
                 });
                 snack(result.data['data']['firstName']);
               },
