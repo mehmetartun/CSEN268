@@ -4,6 +4,7 @@ enum MyNavigatorRoute {
   home("/", "home"),
   images("images", "images"),
   imageUpload("imageUpload", "imageUpload"),
+  localdb("localdb", "localdb"),
   map("map", "map"),
   contacts("contacts", "contacts"),
   signIn("signIn", "signIn"),
