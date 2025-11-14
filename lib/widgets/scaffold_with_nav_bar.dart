@@ -1,6 +1,4 @@
-import 'package:csen268/navigation/my_navigator_route.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 /// Builds the "shell" for the app by building a Scaffold with a
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
@@ -29,24 +27,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
   }
 
   static int _calculateSelectedIndex(BuildContext context) {
-    final String location = GoRouterState.of(context).uri.path;
-    //TODO: Implement the cases here if widget is used
-    // if (location.startsWith('/users')) {
-    //   return 0;
-    // }
-    // if (location.startsWith('/profile')) {
-    //   return 1;
-    // }
     return 0;
   }
 
   void _onItemTapped(int index, BuildContext context) {
-    switch (index) {
-      //TODO: Implement the cases here if this widget is used
-      // case 0:
-      //   GoRouter.of(context).goNamed(MyNavigatorRoute.home.name);
-      // case 1:
-      //   GoRouter.of(context).goNamed(MyNavigatorRoute.images.name);
-    }
+    switch (index) {}
   }
 }

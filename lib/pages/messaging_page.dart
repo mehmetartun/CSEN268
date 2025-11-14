@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_installations/firebase_app_installations.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,6 @@ class _MessagingPageState extends State<MessagingPage> {
   String? token = "Unknown";
   @override
   void initState() {
-    // TODO: implement initState
     getInstallationId();
     super.initState();
   }

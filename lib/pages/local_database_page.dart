@@ -18,7 +18,6 @@ class _LocalDatabasePageState extends State<LocalDatabasePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initDatabase();
   }
@@ -61,20 +60,18 @@ class _LocalDatabasePageState extends State<LocalDatabasePage> {
                 await updateUsers();
               },
             ),
-            ...users
-                .map(
-                  (e) => UserListTile(
-                    user: e,
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () async {
-                        await deleteUser(e.uid);
-                        await updateUsers();
-                      },
-                    ),
-                  ),
-                )
-                .toList(),
+            ...users.map(
+              (e) => UserListTile(
+                user: e,
+                trailing: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () async {
+                    await deleteUser(e.uid);
+                    await updateUsers();
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),

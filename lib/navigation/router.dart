@@ -6,7 +6,6 @@ import 'package:csen268/pages/local_database_page.dart';
 import 'package:csen268/pages/messaging_page.dart';
 import 'package:csen268/pages/shimmer_future_builder_page.dart';
 import 'package:csen268/pages/sign_in/sign_in_page.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../pages/alert_page.dart';

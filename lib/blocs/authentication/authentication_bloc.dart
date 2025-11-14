@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:csen268/repositories/authentication/authentication_repository.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../model/user.dart';
@@ -35,6 +38,11 @@ class AuthenticationBloc
 
   Future<void> _handleSignOut(event, emit) async {
     emit(AuthenticationWaiting());
+    await FirebaseFunctions.instance.httpsCallable('updateUserToken').call({
+      'uid': user?.uid,
+      'fcmToken': await FirebaseMessaging.instance.getToken() ?? '',
+      'action': 'delete',
+    });
     user = null;
     await authenticationRepository.signOut();
     emit(AuthenticationInitial());
@@ -51,7 +59,11 @@ class AuthenticationBloc
         email: event.email,
         password: event.password,
       );
-
+      await FirebaseFunctions.instance.httpsCallable('updateUserToken').call({
+        'uid': user?.uid,
+        'fcmToken': await FirebaseMessaging.instance.getToken() ?? '',
+        'action': 'add',
+      });
       emit(AuthenticationAuthenticated());
       return;
     } catch (e) {
@@ -67,6 +79,15 @@ class AuthenticationBloc
         email: event.email,
         password: event.password,
       );
+      // await FirebaseFirestore.instance.collection("users").doc(user?.uid).set({
+      //   'token': await FirebaseMessaging.instance.getToken(),
+      // }, SetOptions(merge: true));
+
+      await FirebaseFunctions.instance.httpsCallable('updateUserToken').call({
+        'uid': user?.uid,
+        'fcmToken': await FirebaseMessaging.instance.getToken() ?? '',
+        'action': 'add',
+      });
 
       emit(AuthenticationAuthenticated());
       return;

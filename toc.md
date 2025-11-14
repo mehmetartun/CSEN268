@@ -65,3 +65,11 @@ Creating Functions and Calling from App
 Firestore Triggers
 - [Lecture 15 - 04](https://github.com/mehmetartun/CSEN268/tree/L15.04) 
 Firebase Storage
+- [Lecture 16 - 01](https://github.com/mehmetartun/CSEN268/tree/L16.01) 
+SharedPreferences Key Value Pairs
+- [Lecture 16 - 02](https://github.com/mehmetartun/CSEN268/tree/L16.02) 
+SQFLite Database
+- [Lecture 16 - 03](https://github.com/mehmetartun/CSEN268/tree/L16.03) 
+Firebase Storage Object Triggers for Thumbnail Creation
+- [Lecture 16 - 04](https://github.com/mehmetartun/CSEN268/tree/L16.04) 
+Blocking Auth Functions to Create User and FCM Token Saving

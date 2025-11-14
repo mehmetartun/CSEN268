@@ -7,31 +7,33 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'notifications_event.dart';
 part 'notifications_state.dart';
 
-enum NotificationType {
-  onMessage,
-  onBackgroundMessage,
-  onMessageOpenedApp,
-}
+enum NotificationType { onMessage, onBackgroundMessage, onMessageOpenedApp }
 
 class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   NotificationsBloc() : super(NotificationsInitial()) {
-    on<NotificationsEvent>((event, emit) {
-      // TODO: implement event handler
-    });
     on<NotificationsOnMessageEvent>((event, emit) {
-      emit(NotificationsReceivedState(
+      emit(
+        NotificationsReceivedState(
           message: event.message,
-          notificationType: NotificationType.onMessage));
+          notificationType: NotificationType.onMessage,
+        ),
+      );
     });
     on<NotificationsOnMessageOpenedAppEvent>((event, emit) {
-      emit(NotificationsReceivedState(
+      emit(
+        NotificationsReceivedState(
           message: event.message,
-          notificationType: NotificationType.onMessageOpenedApp));
+          notificationType: NotificationType.onMessageOpenedApp,
+        ),
+      );
     });
     on<NotificationsOnBackgroundMessageEvent>((event, emit) {
-      emit(NotificationsReceivedState(
+      emit(
+        NotificationsReceivedState(
           message: event.message,
-          notificationType: NotificationType.onBackgroundMessage));
+          notificationType: NotificationType.onBackgroundMessage,
+        ),
+      );
     });
   }
 
@@ -40,16 +42,17 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   StreamSubscription<RemoteMessage>? messageOpenedAppSubscription;
 
   void init() async {
-    messageOpenedAppSubscription =
-        FirebaseMessaging.onMessageOpenedApp.listen((message) {});
+    messageOpenedAppSubscription = FirebaseMessaging.onMessageOpenedApp.listen(
+      (message) {},
+    );
 
     messageSubscription = FirebaseMessaging.onMessage.listen((message) {
       print("message");
       add(NotificationsOnMessageEvent(message: message));
     });
 
-    RemoteMessage? message =
-        await FirebaseMessaging.instance.getInitialMessage();
+    RemoteMessage? message = await FirebaseMessaging.instance
+        .getInitialMessage();
     if (message != null) {
       add(NotificationsOnBackgroundMessageEvent(message: message));
     }
@@ -57,7 +60,6 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
 
   @override
   Future<void> close() {
-    // TODO: implement close
     messageSubscription?.cancel();
     messageOpenedAppSubscription?.cancel();
     return super.close();

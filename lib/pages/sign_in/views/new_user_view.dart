@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NewUserView extends StatefulWidget {
   const NewUserView({super.key, required this.newUserWithEmail});
@@ -19,13 +18,11 @@ class _NewUserViewState extends State<NewUserView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -39,10 +36,10 @@ class _NewUserViewState extends State<NewUserView> {
         child: Form(
           key: formKey,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-                Text("Login Please"),
+                Text("Signup"),
                 TextFormField(
                   controller: emailController,
                   decoration: InputDecoration(label: Text("Email")),
@@ -70,8 +67,9 @@ class _NewUserViewState extends State<NewUserView> {
                     return null;
                   },
                 ),
+                SizedBox(height: 20),
                 FilledButton(
-                  child: Text("Login"),
+                  child: Text("Sign Up"),
                   onPressed: () {
                     if (formKey.currentState?.validate() ?? false) {
                       formKey.currentState?.save();

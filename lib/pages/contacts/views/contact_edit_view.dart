@@ -21,7 +21,6 @@ class _ContactEditViewState extends State<ContactEditView> {
   @override
   void initState() {
     _contact = widget.contact;
-    // TODO: implement initState
     super.initState();
   }
 

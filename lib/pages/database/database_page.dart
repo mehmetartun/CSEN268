@@ -35,7 +35,6 @@ class DatabasePage extends StatelessWidget {
             case DatabaseInitial _:
               return LoadingView();
           }
-          ;
         },
       ),
     );
