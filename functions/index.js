@@ -8,10 +8,14 @@
  */
 
 const { setGlobalOptions } = require("firebase-functions");
+const { onSchedule } = require("firebase-functions/scheduler");
 const { onCall, onRequest } = require("firebase-functions/v2/https");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, Timestamp } = require("firebase-admin/firestore");
+const { getMessaging } = require("firebase-admin/messaging");
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
+const { beforeUserCreated, beforeUserSignedIn } = require("firebase-functions/v2/identity");
+
 
 const { getStorage } = require("firebase-admin/storage");
 const { onObjectFinalized } = require("firebase-functions/storage");
@@ -38,6 +42,80 @@ const { get } = require("http");
 setGlobalOptions({ maxInstances: 10 });
 initializeApp();
 
+exports.saveUser = beforeUserCreated(async (event) => {
+    const user = event.data;
+    const db = getFirestore();
+    const userRef = db.collection('users').doc(user.uid);
+    await userRef.set({
+        email: user.email ?? null,
+        displayName: user.displayName ?? null,
+        photoUrl: user.photoURL ?? null,
+        createdAt: Timestamp.now(),
+        uid: user.uid,
+        emailVerified: user.emailVerified,
+    }, { merge: true });
+});
+
+exports.updateUser = beforeUserSignedIn(async (event) => {
+    const user = event.data;
+    const db = getFirestore();
+    const userRef = db.collection('users').doc(user.uid);
+    await userRef.update({
+        emailVerified: user.emailVerified,
+    });
+});
+
+exports.updateUserToken = onCall(async (request) => {
+    if (!request.data.uid || !request.data.fcmToken) {
+        return { 'message': 'Invalid request' };
+    }
+    const uid = request.data.uid;
+    const fcmToken = request.data.fcmToken;
+    const action = request.data.action;
+    const db = getFirestore();
+    const userRef = db.doc(`users/${uid}`);
+    const qs = await userRef.get();
+    var fcmTokens = qs.data().fcmTokens;
+    if (!fcmTokens) {
+        fcmTokens = [];
+    }
+    if (action == 'delete') {
+        fcmTokens = fcmTokens.filter(token => token !== fcmToken);
+    } else if (action == 'add') {
+        if (!fcmTokens.includes(fcmToken)) {
+            fcmTokens.push(fcmToken);
+        }
+    }
+    await userRef.update({
+        fcmTokens: fcmTokens,
+    });
+    return { 'message': 'Success' };
+});
+
+
+exports.sendMessageTest = onRequest(async (request, response) => {
+    const email = request.query.email;
+    const message = request.query.message;
+    const db = getFirestore();
+    const userRef = db.collection('users').where('email', '==', email);
+    const qs = await userRef.get();
+    if (qs.empty) {
+        response.status(404).send('User not found');
+        return;
+    }
+    const user = qs.docs[0].data();
+    const fcmTokens = user.fcmTokens;
+    if (!fcmTokens || fcmTokens.length === 0) {
+        response.status(404).send('No Token Found');
+        return;
+    }
+    var messages = [];
+    fcmTokens.forEach(token => {
+        messages.push({ 'token': token, 'notification': { 'title': 'Test', 'body': message } });
+    });
+    await getMessaging().sendEach(messages);
+    response.send('Success');
+})
 
 exports.helloWorld = onRequest((request, response) => {
     logger.info("Hello logs!", { structuredData: true });
@@ -105,3 +183,8 @@ exports.onImageUploaded = onObjectFinalized(async (event) => {
         }
     }
 });
+
+// exports.scheduleTest = onSchedule("46 20 * * *", async (event) => {
+//     logger.info("Hello");
+// });
+

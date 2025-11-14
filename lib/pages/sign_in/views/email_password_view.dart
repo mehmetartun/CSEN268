@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EmailPasswordView extends StatefulWidget {
   const EmailPasswordView({
@@ -28,13 +27,11 @@ class _EmailPasswordViewState extends State<EmailPasswordView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -46,14 +43,14 @@ class _EmailPasswordViewState extends State<EmailPasswordView> {
       appBar: AppBar(
         title: Text("Login Page"),
         actions: [
-          FilledButton(child: Text("New"), onPressed: widget.newUserRequest),
+          FilledButton(onPressed: widget.newUserRequest, child: Text("New")),
         ],
       ),
       body: Center(
         child: Form(
           key: formKey,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
                 Text("Login Please"),
@@ -84,6 +81,7 @@ class _EmailPasswordViewState extends State<EmailPasswordView> {
                     return null;
                   },
                 ),
+                SizedBox(height: 20),
                 FilledButton(
                   child: Text("Login"),
                   onPressed: () {

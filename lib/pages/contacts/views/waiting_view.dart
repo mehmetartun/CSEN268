@@ -11,11 +11,7 @@ class WaitingView extends StatelessWidget {
         child: Column(
           children: [
             Text("Saving the Contact"),
-            Container(
-              width: 40,
-              height: 40,
-              child: CircularProgressIndicator(),
-            ),
+            SizedBox(width: 40, height: 40, child: CircularProgressIndicator()),
           ],
         ),
       ),

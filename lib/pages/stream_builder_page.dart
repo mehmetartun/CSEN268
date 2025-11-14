@@ -40,8 +40,9 @@ class StreamBuilderPage extends StatelessWidget {
                   }
                   return CircularProgressIndicator();
                 },
-                stream:
-                    FirebaseFirestore.instance.collection('cities').snapshots(),
+                stream: FirebaseFirestore.instance
+                    .collection('cities')
+                    .snapshots(),
               ),
             ],
           ),
@@ -59,7 +60,7 @@ class CityEntry extends StatefulWidget {
 }
 
 class _CityEntryState extends State<CityEntry> {
-  GlobalKey<FormState> _formKey = GlobalKey();
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
   TextEditingController controller = TextEditingController();
 
@@ -103,7 +104,6 @@ class _CityEntryState extends State<CityEntry> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     controller.dispose();
     super.dispose();
   }

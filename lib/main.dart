@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               routerConfig: router,
               builder: (context, child) {
-                Widget _child = child ?? Container();
+                // Widget child = child ?? Container();
                 return BlocListener<NotificationsBloc, NotificationsState>(
                   listener: (context, state) async {
                     if (state is NotificationsReceivedState) {
@@ -124,7 +124,7 @@ class MyApp extends StatelessWidget {
                       );
                     }
                   },
-                  child: _child,
+                  child: child,
                 );
               },
             );

@@ -23,7 +23,7 @@ class _InsertViewState extends State<InsertView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Name", style: Theme.of(context).textTheme.labelMedium),
-              Text(mockUser.firstName + " " + mockUser.lastName),
+              Text("${mockUser.firstName} ${mockUser.lastName}"),
               SizedBox(height: 10),
               Text("Email", style: Theme.of(context).textTheme.labelMedium),
               Text(mockUser.email),

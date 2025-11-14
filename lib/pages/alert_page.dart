@@ -2,8 +2,21 @@ import 'package:flutter/material.dart';
 
 enum PizzaType { pepperoni, fourSeasons, marinara, margarita }
 
-class AlertPage extends StatelessWidget {
+class AlertPage extends StatefulWidget {
   const AlertPage({super.key});
+
+  @override
+  State<AlertPage> createState() => _AlertPageState();
+}
+
+class _AlertPageState extends State<AlertPage> {
+  showSnackBar(String result) {
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(result)));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +46,7 @@ class AlertPage extends StatelessWidget {
                 await showDialog(
                   context: context,
                   builder: (context) {
-                    return Container(child: Text("Hello"));
+                    return Text("Hello");
                   },
                 );
               },
@@ -89,9 +102,7 @@ class AlertPage extends StatelessWidget {
                     );
                   },
                 );
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text("Received $result")));
+                showSnackBar("Received $result");
               },
             ),
             FilledButton(
@@ -114,9 +125,7 @@ class AlertPage extends StatelessWidget {
                   },
                   barrierDismissible: false,
                 );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Received ${type?.name}")),
-                );
+                showSnackBar("Received ${type?.name}");
               },
             ),
             FilledButton(

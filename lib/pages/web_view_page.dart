@@ -9,7 +9,7 @@ class WebViewPage extends StatefulWidget {
 }
 
 class _WebViewPageState extends State<WebViewPage> {
-  GlobalKey<FormState> _formKey = GlobalKey();
+  final GlobalKey<FormState> _formKey = GlobalKey();
   late TextEditingController controller;
   late WebViewController webViewController;
   Uri? uri;
