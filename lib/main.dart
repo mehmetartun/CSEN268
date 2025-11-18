@@ -1,3 +1,4 @@
+import 'package:csen268/pages/generic_page.dart';
 import 'package:csen268/repositories/authentication/authentication_repository.dart';
 import 'package:firebase_app_installations/firebase_app_installations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -131,6 +132,19 @@ class MyApp extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+class MySimpleApp extends StatelessWidget {
+  const MySimpleApp({super.key});
+
+  @override
+  build(BuildContext context) {
+    return MaterialApp(
+      title: 'Simple App',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const GenericPage(title: 'Generic Page Test'),
     );
   }
 }
