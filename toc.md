@@ -73,3 +73,8 @@ SQFLite Database
 Firebase Storage Object Triggers for Thumbnail Creation
 - [Lecture 16 - 04](https://github.com/mehmetartun/CSEN268/tree/L16.04) 
 Blocking Auth Functions to Create User and FCM Token Saving
+- [Lecture 17 - 01](https://github.com/mehmetartun/CSEN268/tree/L17.01) 
+Flutter Testing - basic widget testing
+- [Lecture 17 - 02](https://github.com/mehmetartun/CSEN268/tree/L17.02) 
+Flutter Testing - unit testing
+
