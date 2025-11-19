@@ -83,5 +83,8 @@ Flutter Testing - Testing complex Widget
 Flutter Testing - Fixing Errors Based on the Fix
 - [Lecture 17 - 05](https://github.com/mehmetartun/CSEN268/tree/L17.05) 
 Flutter Testing - Testing Scroll Behaviour
-
+- [Lecture 17 - 06](https://github.com/mehmetartun/CSEN268/tree/L17.06) 
+Flutter Testing - Testing Snackbar and Tap
+- [Lecture 17 - 07](https://github.com/mehmetartun/CSEN268/tree/L17.07) 
+Flutter Testing - Integration Testing
 
