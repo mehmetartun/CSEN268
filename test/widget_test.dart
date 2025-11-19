@@ -6,13 +6,48 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:csen268/main.dart';
+import 'package:csen268/model/user.dart';
+import 'package:csen268/widgets/user_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Generic Page Test', (WidgetTester tester) async {
-    await tester.pumpWidget(MySimpleApp());
-    expect(find.text('Generic Page Test'), findsOneWidget);
-    expect(find.textContaining('Generic'), findsOneWidget);
+  Widget createWidget(Widget child) {
+    return MaterialApp(home: Scaffold(body: child));
+  }
+
+  testWidgets('UserListTile Widget Test', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      createWidget(
+        UserListTile(
+          user: User(
+            firstName: "John",
+            lastName: "Doe",
+            email: "john@doe.com",
+            imageUrl: "https://placehold.co/500x500",
+            uid: "1234567890",
+          ),
+        ),
+      ),
+    );
+    expect(find.text('John Doe'), findsOneWidget);
+    expect(find.text('JD'), findsOneWidget);
+    expect(find.text('john@doe.com'), findsOneWidget);
+    await tester.pumpWidget(
+      createWidget(
+        UserListTile(
+          user: User(
+            firstName: "John",
+            lastName: "",
+            email: "john@doe.com",
+            imageUrl: "https://placehold.co/500x500",
+            uid: "1234567890",
+          ),
+        ),
+      ),
+    );
+    expect(find.text('John'), findsOneWidget);
+    expect(find.text('J'), findsOneWidget);
+    expect(find.text('john@doe.com'), findsOneWidget);
   });
 }
