@@ -77,4 +77,11 @@ Blocking Auth Functions to Create User and FCM Token Saving
 Flutter Testing - basic widget testing
 - [Lecture 17 - 02](https://github.com/mehmetartun/CSEN268/tree/L17.02) 
 Flutter Testing - unit testing
+- [Lecture 17 - 03](https://github.com/mehmetartun/CSEN268/tree/L17.03) 
+Flutter Testing - Testing complex Widget
+- [Lecture 17 - 04](https://github.com/mehmetartun/CSEN268/tree/L17.04) 
+Flutter Testing - Fixing Errors Based on the Fix
+- [Lecture 17 - 05](https://github.com/mehmetartun/CSEN268/tree/L17.05) 
+Flutter Testing - Testing Scroll Behaviour
+
 
