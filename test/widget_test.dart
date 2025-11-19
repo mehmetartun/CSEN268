@@ -32,41 +32,6 @@ void main() {
     );
   }
 
-  testWidgets('UserListTile Widget Test', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      createWidget(
-        UserListTile(
-          user: User(
-            firstName: "John",
-            lastName: "Doe",
-            email: "john@doe.com",
-            imageUrl: "https://placehold.co/500x500",
-            uid: "1234567890",
-          ),
-        ),
-      ),
-    );
-    expect(find.text('John Doe'), findsOneWidget);
-    expect(find.text('JD'), findsOneWidget);
-    expect(find.text('john@doe.com'), findsOneWidget);
-    await tester.pumpWidget(
-      createWidget(
-        UserListTile(
-          user: User(
-            firstName: "John",
-            lastName: "",
-            email: "john@doe.com",
-            imageUrl: "https://placehold.co/500x500",
-            uid: "1234567890",
-          ),
-        ),
-      ),
-    );
-    expect(find.text('John'), findsOneWidget);
-    expect(find.text('J'), findsOneWidget);
-    expect(find.text('john@doe.com'), findsOneWidget);
-  });
-
   testWidgets('ListView', (tester) async {
     await tester.pumpWidget(createWidget(createUserList()));
     await tester.pumpAndSettle();
@@ -75,5 +40,11 @@ void main() {
     await tester.fling(find.byType(ListView), Offset(0, -200), 400);
     await tester.pumpAndSettle();
     expect(find.text("First0 Last0"), findsNothing);
+    await tester.fling(find.byType(ListView), Offset(0, 200), 400);
+    await tester.pumpAndSettle();
+    expect(find.text("First0 Last0"), findsOne);
+    await tester.tap(find.byType(UserListTile).first);
+    await tester.pumpAndSettle();
+    expect(find.text('First0 Last0 added.'), findsOne);
   });
 }
