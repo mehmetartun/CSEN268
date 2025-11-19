@@ -10,6 +10,12 @@
             "type": "dart"
         },
         {
+            "name": "csen268-test",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_test.dart"
+        },
+        {
             "name": "csen268 (profile mode)",
             "request": "launch",
             "type": "dart",
