@@ -1,122 +1,142 @@
-# Lecture 17 - 7 Integration Testing
-For integration testing we create a directory called [integration_test](/integration_test). In this, we create a file called [app_test.dart](/integration_test/app_test.dart).
+# Lecture 18 - Generative AI
+
+We add this function to index.js
+
+```javascript
+exports.getRecipe = onCall({
+    secrets: ['GOOGLE_API_KEY'],
+    timeoutSeconds: 540,
+}, async (request) => {
+    const schema = request.data.schema;
+    const languageModel = request.data.languageModel;
+    try {
+        const model = genAI.getGenerativeModel({
+            model: languageModel,
+            generationConfig: {
+                responseMimeType: 'application/json',
+                responseSchema: schema,
+            },
+        });
+
+        const safetySettings = [
+            {
+                category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+                threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+            {
+                category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+        ];
+        const prompt = request.data.prompt;
+        const result = await model.generateContent({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            safetySettings,
+        });
+        const response = result.response;
+        if (!response || !response.candidates || !response.candidates[0].content) {
+            throw new Error('Invalid response from Gemini API.');
+        }
+        const jsonString = response.candidates[0].content.parts[0].text;
+        const recipeJson = JSON.parse(jsonString);
+        return recipeJson;
+    } catch (error) {
+        console.error('Error calling Gemini API:', error);
+        if (error.response) {
+            console.error('API Response Data:', error.response.data);
+        }
+        res.status(500).send(`Error processing request: ${error.message}.`);
+        return { 'error': error.message };
+    }
+});
+```
+
+We call this from our app with a schema:
 ```dart
-void main() {
-  group('Testing MyApp', () {
-    testWidgets('Firestore Test', (tester) async {
-      await tester.pumpWidget(const MyApp());
-      expect(find.text('Testing Start'), findsOne);
-    });
+static Map<String, dynamic> get schema {
+    Map<String, dynamic> schema = {
+      'type': 'OBJECT',
+      'properties': {
+        'cocktail_name': {'type': 'STRING'},
+        'description': {'type': 'STRING'},
+        'total_calories_in_kCal': {'type': 'NUMBER'},
+        'total_volume_in_mL': {'type': 'NUMBER'},
+        'history': {'type': 'STRING'},
+        'alcohol_by_volume_%': {'type': 'NUMBER'},
+        'serving_format': {'type': 'STRING'},
+        'total_carbohydrates_in_g': {'type': 'NUMBER'},
+        'total_protein_in_g': {'type': 'NUMBER'},
+        'total_fat_in_g': {'type': 'NUMBER'},
+        'ingredients': {
+          'type': 'ARRAY',
+          'items': {
+            'type': 'OBJECT',
+            'properties': {
+              'name': {'type': 'STRING'},
+              'quantity_in_mL': {'type': 'NUMBER'},
+              'carbohydrates_in_g': {'type': 'NUMBER'},
+              'protein_in_g': {'type': 'NUMBER'},
+              'fat_in_g': {'type': 'NUMBER'},
+              'calories_in_kCal': {'type': 'NUMBER'},
+              'alcohol_by_volume_%': {'type': 'NUMBER'},
+            },
+          },
+        },
+        'instructions': {
+          'type': 'ARRAY',
+          'items': {
+            'type': 'OBJECT',
+            'properties': {
+              'step': {'type': 'NUMBER'},
+              'description': {'type': 'STRING'},
+            },
+          },
+        },
+      },
+      'required': [
+        'cocktail_name',
+        'ingredients',
+        'instructions',
+        'description',
+        'total_calories_in_kCal',
+        'total_volume_in_mL',
+        'history',
+      ],
+    };
+    return schema;
+  }
+```
+
+which is attached to the `CocktailRecipe` object.
+
+Calling it from our app:
+```dart
+   HttpsCallableResult result = await getRecipeCall.call({
+        'schema': CocktailRecipe.schema,
+        'prompt': 'Get me the recipe of $cocktailName cocktail.',
+        'languageModel': 'gemini-2.5-flash',
+      });
+      recipe = CocktailRecipe.fromJson(_castMap(result.data));
+```
+
+Here the data coming back from the cloud function is not of `Map<String,dynamic>` type. Therefore we use this function to convert:
+```dart
+Map<String, dynamic> _castMap(Map<Object?, Object?> map) {
+  return map.map((key, value) {
+    if (value is Map<Object?, Object?>) {
+      return MapEntry(key as String, _castMap(value));
+    }
+    if (value is List) {
+      return MapEntry(
+        key as String,
+        value
+            .map(
+              (item) => item is Map<Object?, Object?> ? _castMap(item) : item,
+            )
+            .toList(),
+      );
+    }
+    return MapEntry(key as String, value);
   });
 }
-
 ```
-Integration tests are run on real device or simulator. With the command
-```zsh
-$ flutter test integration_test/app_test.dart
-```
-Note that this requires a current device target to run the test on. The test is run in a simulator or actual device.
-
-### Testing Firestore
-We create a new page [FirestoreTestPage](/lib/pages/firestore_test_page.dart). It has a data addition and data retrieval button.
-```dart
-        body: Center(
-          child: Column(
-            children: [
-              FilledButton(
-                child: Text("Add Data"),
-                onPressed: () async {
-                  ref = await FirebaseFirestore.instance
-                      .collection("test_firestore")
-                      .add({'firstName': 'John'});
-                  data_added = true;
-                  setState(() {});
-                },
-              ),
-              Text("Data Added: $data_added"),
-              FilledButton(
-                child: Text("Retrieve Data"),
-                onPressed: () async {
-                  final DocumentSnapshot ds = await ref!.get();
-                  first_name =
-                      (ds.data()! as Map<String, dynamic>)['firstName'];
-                  data_retrieved = true;
-                  setState(() {});
-                },
-              ),
-              Text("Data Retrieved: $data_retrieved"),
-              Text("First Name: $first_name"),
-            ],
-          ),
-        )
-```
-Our test at this stage contains only checking the page and the buttons rendering correctly:
-```dart
-      await tester.pumpWidget(const MyApp());
-      await tester.pumpAndSettle(Duration(milliseconds: 3000));
-      // expect(find.text('Testing Start'), findsOne);
-      expect(find.text('Firestore Test'), findsOne);
-      expect(find.widgetWithText(FilledButton, "Add Data"), findsOne);
-      expect(find.widgetWithText(FilledButton, "Retrieve Data"), findsOne);
-```
-The `pumpAndSettle` waits for the UI to finish any animations and waits another 3000 milliseconds. We can see that the tests pass.
-
-### Testing addition of data
-We now test the interaction with Firebase and add the following tests in our [app_test.dart](/integration_test/app_test.dart):
-```dart
-      await tester.tap(find.widgetWithText(FilledButton, "Add Data"));
-      await tester.pumpAndSettle(Duration(milliseconds: 3000));
-      expect(find.text("Data Added: true"), findsOne);
-      await tester.tap(find.widgetWithText(FilledButton, "Retrieve Data"));
-      await tester.pumpAndSettle(Duration(milliseconds: 3000));
-      expect(find.text("Data Retrieved: true"), findsOne);
-      expect(find.text("First Name: John"), findsOne);
-```
-When we run the test we receive an error:
-```zsh
-The following FirebaseException was thrown running a test:
-[core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
-```
-This is because we normally initialize Firebase in `main()` before calling calling `runApp`. To do this we modify the `main()` in the [app_test](/integration_test/app_test.dart) with the following:
-```dart
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-```
-Now, when we run the test we see that it passes both tests.
-
-
-### Setting up your environment before the lecture
-
-Each lecture is stored under a separate tag. On your computer do the following
-
-    git clone <Repository Name>
-    git pull
-    git tag -l
-
-This will list all the tags in the repository such as
-
-    Lecture4
-    Lecture5
-    Lecture6
-    ...
-
-In order to pull a particular tag to your computer
-
-    git checkout tags/Lecture5_start -b Lecture5_study
-
-### Cloning to Google IDX
-
-1. Go to this link. [idx.dev](https://idx.google.com/import?url=https://github.com/mehmetartun/CSEN268-F24)
-2. Name your project (default value is fine)
-3. Click the Flutter Project checkbox
-4. Wait for the setup to continue
-5. Open the terminal and pull the requisite tag from the repo by
-```zsh
-git pull
-git tag -l
-git tags/<TagName> -b <NewLocalBranchName>
-```
-
-
