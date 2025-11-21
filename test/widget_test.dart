@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   Widget createWidget(Widget child) {
     return MaterialApp(home: Scaffold(body: child));
   }
@@ -32,19 +34,21 @@ void main() {
     );
   }
 
-  testWidgets('ListView', (tester) async {
-    await tester.pumpWidget(createWidget(createUserList()));
-    await tester.pumpAndSettle();
-    expect(find.byType(ListView), findsOne);
-    expect(find.text("First0 Last0"), findsOne);
-    await tester.fling(find.byType(ListView), Offset(0, -200), 400);
-    await tester.pumpAndSettle();
-    expect(find.text("First0 Last0"), findsNothing);
-    await tester.fling(find.byType(ListView), Offset(0, 200), 400);
-    await tester.pumpAndSettle();
-    expect(find.text("First0 Last0"), findsOne);
-    await tester.tap(find.byType(UserListTile).first);
-    await tester.pumpAndSettle();
-    expect(find.text('First0 Last0 added.'), findsOne);
+  group('Testing MyApp', () {
+    testWidgets('ListView', (tester) async {
+      await tester.pumpWidget(createWidget(createUserList()));
+      await tester.pumpAndSettle();
+      expect(find.byType(ListView), findsOne);
+      expect(find.text("First0 Last0"), findsOne);
+      await tester.fling(find.byType(ListView), Offset(0, -200), 400);
+      await tester.pumpAndSettle();
+      expect(find.text("First0 Last0"), findsNothing);
+      await tester.fling(find.byType(ListView), Offset(0, 200), 400);
+      await tester.pumpAndSettle();
+      expect(find.text("First0 Last0"), findsOne);
+      await tester.tap(find.byType(UserListTile).first);
+      await tester.pumpAndSettle();
+      expect(find.text('First0 Last0 added.'), findsOne);
+    });
   });
 }

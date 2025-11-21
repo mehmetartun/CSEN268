@@ -16,6 +16,7 @@ enum MyNavigatorRoute {
   webView("webview", "webview"),
   inAppWebView("inappwebview", "inappwebview"),
   functionsDemo("functionsDemo", "functionsDemo"),
+  generativeAI("generativeAI", "generativeAI"),
   messaging("messaging", "messaging");
 
   const MyNavigatorRoute(this.path, this.name);
