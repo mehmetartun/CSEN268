@@ -43,6 +43,7 @@ class _GenerativeAiPageState extends State<GenerativeAiPage> {
         'prompt': 'Get me the recipe of $cocktailName cocktail.',
         'languageModel': 'gemini-2.5-flash',
       });
+      print(result.data);
       recipe = CocktailRecipe.fromJson(_castMap(result.data));
       setState(() {
         readOnly = false;
