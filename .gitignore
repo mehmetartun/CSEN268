@@ -33,6 +33,11 @@ migrate_working_dir/
 /build/
 /coverage/
 
+google_service_account.json
+
+*/node_modules/
+
+
 # Symbolication related
 app.*.symbols
 
