@@ -11,3 +11,5 @@ yarn-error.log*
 # Environment variables
 .env
 .env.local
+
+google_service_account.json

@@ -33,7 +33,7 @@ migrate_working_dir/
 /build/
 /coverage/
 
-google_service_account.json
+functions/google_service_account.json
 
 */node_modules/
 
