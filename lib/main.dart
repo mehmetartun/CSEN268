@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider(
-      create: (context) => FirebaseAuthenticationRepository() as AuthenticationRepository,
+      create: (context) =>
+          FirebaseAuthenticationRepository() as AuthenticationRepository,
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
         initialRoute: "/",
         routes: {
           "/": (context) => const HomePage(),
-          "/loginCubit": (context) => const LoginPage(),
+          "/login": (context) => const LoginPage(),
           "/example": (context) => const ExamplePage(),
           "/columnExamples": (context) => const ColumnExamplesPage(),
           "/listViewExample": (context) => const ListViewExamplePage(),

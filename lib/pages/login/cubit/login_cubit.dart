@@ -1,4 +1,3 @@
-
 import 'package:csen268/repositories/authentication/authentication_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,12 +11,21 @@ class LoginCubit extends Cubit<LoginState> {
 
   final AuthenticationRepository authenticationRepository;
 
-  void login({required String email, required String password}) async {
-    user = await authenticationRepository.signIn(email: email, password: password);
-    if (user == null) {
-      emit(LoginError());
+  Future<void> login({required String email, required String password}) async {
+    try {
+      user = await authenticationRepository.signIn(
+        email: email,
+        password: password,
+      );
+      if (user == null) {
+        emit(LoginError(message: "User is null..."));
+        return;
+      }
+      emit(LoginSuccess());
       return;
-    } 
-    emit (LoginSuccess());
+    } catch (e) {
+      emit(LoginError(message: e.toString()));
+      return;
+    }
   }
 }
