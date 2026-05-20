@@ -9,8 +9,8 @@
 
 const { setGlobalOptions } = require("firebase-functions");
 const { onCall, onRequest } = require("firebase-functions/v2/https");
-const { initializeApp } = require("firebase-admin/app")
-const { getFirestore } = require("firebase-admin/firestore")
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 
 const logger = require("firebase-functions/logger");
@@ -31,7 +31,7 @@ initializeApp();
 
 exports.helloWorld = onRequest((request, response) => {
     logger.info("Hello logs!", { structuredData: true });
-    response.send("Hello from Firebase today!");
+    response.send("Hello from Firebase today! It's a nice day isn't it...");
 });
 
 exports.helloWorldCall = onCall((request) => {
@@ -54,7 +54,7 @@ exports.getData = onCall(async (request) => {
 exports.onUserCreated = onDocumentCreated("/function_test/{userId}", async (event) => {
     await getFirestore().collection('log_test').add(
         {
-            'userId': event.data.params.userId,
+            'userId': event.params.userId,
             'createTime': event.data.createTime,
         }
     )

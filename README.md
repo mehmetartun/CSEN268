@@ -194,6 +194,60 @@ The complete behaviour is seen in this recording:
 
 ![Storage Demo](/assets/gifs/StorageUploadDemo.gif)
 
+### Uploading Image in Flutter Web
+The `putFile` method doesn't work on Web. We need to read the bytes and then uplaod. In the file `save_image_web.dart`:
+```dart
+  static Future<String?> uploadImageToStorage({
+    required XFile file,
+    required Reference storageReference,
+    void Function(double)? progressCallback,
+  }) async {
+    Uint8List fileBytes = await file.readAsBytes();
+    SettableMetadata metadata = SettableMetadata(
+      contentType: file.mimeType, // e.g., 'image/jpeg', 'application/pdf'
+    );
+    UploadTask uploadTask = storageReference.putData(fileBytes, metadata);
+    TaskSnapshot snapshot = await uploadTask;
+    if (progressCallback != null) {
+      uploadTask.snapshotEvents.listen((event) {
+        progressCallback(event.bytesTransferred / event.totalBytes);
+      });
+    }
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+```
 
+handles the upload for **Flutter Web**
+
+### CORS issues
+In Flutter Web you will encounter **CORS** issues. To solve them we need to run the following script:
+```javascript
+const { Storage } = require('@google-cloud/storage');
+// Initialize storage with your service account credentials
+const storage = new Storage({
+    keyFilename: '../google_service_account.json',
+});
+const bucketName = 'csen268-f25.firebasestorage.app';
+async function configureBucketCors() {
+    await storage.bucket(bucketName).setCorsConfiguration([
+        {
+            maxAgeSeconds: 3600,
+            method: ['GET', 'HEAD', 'OPTIONS'],
+            origin: ['http://localhost:54937', 'https://csen268-f25.web.app',
+                'https://csen268-f25.firebaseapp.com'], // Change to your specific domain for production
+            responseHeader: ['Content-Type', 'Authorization',
+                'Content-Length', 'User-Agent'],
+        },
+    ]);
+    console.log(`CORS configuration successfully updated for ${bucketName}`);
+}
+configureBucketCors().catch(console.error);
+```
+in the `functions` directory. Note that `google_service_account.json` is downloaded from **Google Cloud Console**. Before running this script, ensure that the package necessary is loaded by calling
+```
+npm install @google-cloud/storage
+```
+in the terminal in the `functions` directory.
 
 

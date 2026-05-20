@@ -5,7 +5,6 @@ import 'package:csen268/pages/sign_in/views/email_password_view.dart';
 import 'package:csen268/pages/sign_in/views/new_user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_contacts/properties/email.dart';
 import 'package:go_router/go_router.dart';
 
 import 'views/error_view.dart';

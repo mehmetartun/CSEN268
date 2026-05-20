@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 
@@ -43,7 +44,11 @@ class _FunctionsDemoPageState extends State<FunctionsDemoPage> {
               onPressed: () async {
                 HttpsCallableResult result = await addDataCall.call({
                   'collection': 'function_test',
-                  'map': {'firstName': 'John', 'lastName': 'Doe'},
+                  'map': {
+                    'firstName': 'John',
+                    'lastName': 'Doe',
+                    'today': 'nice weather',
+                  },
                 });
 
                 snack(result.data['path']);
@@ -57,6 +62,21 @@ class _FunctionsDemoPageState extends State<FunctionsDemoPage> {
                   'path': path,
                 });
                 snack(result.data['data']['firstName']);
+              },
+            ),
+            FilledButton(
+              child: Text("Do CollectionGroupQuery"),
+              onPressed: () async {
+                try {
+                  var res = await FirebaseFirestore.instance
+                      .collectionGroup('cars')
+                      .where('model', isEqualTo: 'Toyota')
+                      .get();
+
+                  print(res.docs.length);
+                } catch (e) {
+                  print(e);
+                }
               },
             ),
           ],

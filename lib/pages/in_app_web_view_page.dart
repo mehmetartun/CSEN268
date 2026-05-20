@@ -9,7 +9,7 @@ class InAppWebViewPage extends StatefulWidget {
 }
 
 class _InAppWebViewPageState extends State<InAppWebViewPage> {
-  GlobalKey<FormState> _formKey = GlobalKey();
+  final GlobalKey<FormState> _formKey = GlobalKey();
   late TextEditingController controller;
   InAppWebViewController? webViewController;
   Uri? uri;
@@ -21,9 +21,6 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
   }
 
   void processForm() {
-    if (controller.text == null) {
-      return;
-    }
     if (controller.text.startsWith("https://") ||
         controller.text.startsWith("http://")) {
       uri = Uri.tryParse(controller.text);
