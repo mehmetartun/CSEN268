@@ -8,10 +8,6 @@ class UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      child: Text(
-        '${user.firstName[0]}${user.lastName[0]}',
-      ),
-    );
+    return CircleAvatar(child: Text('${user.firstName[0]}${user.lastName[0]}'));
   }
 }
