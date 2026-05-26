@@ -93,6 +93,30 @@ exports.updateUserToken = onCall(async (request) => {
 });
 
 
+exports.sendNotification = onCall(async (request) => {
+    const email = request.data.email;
+    const message = request.data.message;
+    const db = getFirestore();
+    const userRef = db.collection('users').where('email', '==', email);
+    const qs = await userRef.get();
+    if (qs.empty) {
+        return { 'error': 'User not found' };
+    }
+    const user = qs.docs[0].data();
+    const fcmTokens = user.fcmTokens;
+    if (!fcmTokens || fcmTokens.length === 0) {
+        response.status(404).send('No Token Found');
+        return;
+    }
+    var messages = [];
+    fcmTokens.forEach(token => {
+        messages.push({ 'token': token, 'notification': { 'title': 'Test', 'body': message } });
+    });
+    await getMessaging().sendEach(messages);
+    return { 'success': 'Success' };
+});
+
+
 exports.sendMessageTest = onRequest(async (request, response) => {
     const email = request.query.email;
     const message = request.query.message;
