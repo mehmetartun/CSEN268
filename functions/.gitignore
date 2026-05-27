@@ -1,3 +1,4 @@
 node_modules/
 google_service_account.json
 *.local
+.env

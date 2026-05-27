@@ -2,7 +2,22 @@
 
 We now use GenKit to process streaming requests.
 
-## Cloud Functions
+## Cloud Functions 
+For the environment, you should place your keys in an `.env` file to run the functions locally. 
+```bash
+GOOGLE_GENAI_API_KEY=AI.......zzz
+GOOGLE_API_KEY=AI.........zzz
+```
+
+For running the cloud functions in the cloud you should set your secrets:
+```bash
+firebase functions:secrets:set GOOGLE_GENAI_APIKEY<hit return>
+```
+You will be able to `paste` the key at the command prompt. You will not see the key. To check if the key has gone through:
+```bash
+firebase functions:secrets:asccess GOOGLE_GENAI_APIKEY
+```
+this should print out the key on the console.
 
 ### GenKit setup
 Using these packages in our `index.js`:
@@ -22,84 +37,127 @@ const ai = genkit({
 enableFirebaseTelemetry();
 ```
 ### Defining the Flow and Function
+First we define a flow which specifies the `inputSchema` and `outputSchema` in terms of the `zod` library. (More info here [zod](https://zod.dev/)).
+
 ```javascript
 const answerQuestionFlow = ai.defineFlow({
     name: "answerQuestion",
     inputSchema: z.object({
         question: z.string(),
+        system: z.string().optional(),
     }),
     outputSchema: z.string(),
     streamSchema: z.string(),
 }, async (input, { sendChunk }) => {
     const { stream, response } = await ai.generateStream({
+        system: input.system,
         prompt: input.question,
     });
-
     for await (const chunk of stream) {
         if (chunk.text) {
             sendChunk(chunk.text);
         }
     }
-
     const finalResponse = await response;
     return finalResponse.text;
 });
-
+```
+We then define the **Genkit** entrypoint with the `onCallGenkit` function class:
+```javascript
 exports.answerQuestion = onCallGenkit({
-    secrets: ['GOOGLE_API_KEY'],
+    secrets: ['GOOGLE_GENAI_API_KEY'],
     timeoutSeconds: 540,
 }, answerQuestionFlow);
 ```
+This is the streaming version of the `answerQuestion` function. It uses the `stream` method of the `generate` class to stream the response from the model.
+Note that this flow is registered as a **streaming** flow, so it will return a `Stream` of chunks instead of a single response.
 
 ## Flutter
 
 Add StreamBuilder to process the streaming response:
 ```dart
- final callable = FirebaseFunctions.instance.httpsCallable(
-        'answerQuestion',
-      );
-      final stream = callable.stream(<String, dynamic>{
-        'question': question,
-      });
+Future<void> generateText() async {
+    if (userInputController.text.isEmpty || isGenerating) return;
 
-      _streamSubscription = stream.listen(
+    setState(() {
+      isGenerating = true;
+      responseText = "";
+    });
+
+    try {
+      final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+        "answerQuestion",
+      );
+      final result = callable.stream({
+        "question": userInputController.text,
+        "system": systemInstructionController.text,
+      });
+      streamSubscription = result.listen(
         (event) {
           if (event is Chunk) {
             final data = event.partialData;
             setState(() {
               if (data is String) {
-                _streamingAnswer += data;
+                responseText += data;
               } else if (data is Map) {
-                _streamingAnswer += data['message'] ?? data.toString();
+                responseText += data['message'] ?? data.toString();
               } else {
-                _streamingAnswer += data.toString();
+                responseText += data.toString();
               }
             });
-            _scrollToBottom();
+            scrollToBottom();
           }
         },
         onError: (error) {
           setState(() {
-            _streamingAnswer +=
-                "\n\n⚠️ Error during stream: ${error.toString()}";
-            _isStreaming = false;
+            responseText += "\n\n⚠️ Error during stream: ${error.toString()}";
+            isGenerating = false;
           });
-          _scrollToBottom();
+          scrollToBottom();
         },
         onDone: () {
           setState(() {
-            _isStreaming = false;
+            isGenerating = false;
           });
-          _scrollToBottom();
+          scrollToBottom();
         },
       );
     } catch (e) {
+      print(e);
+    } finally {
       setState(() {
-        _streamingAnswer = "Failed to initiate connection: $e";
-        _isStreaming = false;
+        isGenerating = false;
       });
-      _scrollToBottom();
     }
   }
 ```
 Here the stream coming back from the cloud function is incrementally shown on the page.
+
+## Scrolling to the bottom
+To achieve a good user experience, with new data we add a callback to the scroll controller to animate it to the bottom:
+```dart
+  void scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutQuad,
+        );
+      }
+      if (scrollControllerMarkdown.hasClients) {
+        scrollControllerMarkdown.animateTo(
+          scrollControllerMarkdown.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutQuad,
+        );
+      }
+    });
+  }
+```
+
+## Resulting flutter output
+
+
+
+![GenAiResult](/assets/gifs/GenAiResult.gif)

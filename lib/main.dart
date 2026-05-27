@@ -1,6 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:csen268/pages/firestore_test_page.dart';
-import 'package:csen268/pages/generic_page.dart';
+
 import 'package:csen268/repositories/authentication/authentication_repository.dart';
 import 'package:firebase_app_installations/firebase_app_installations.dart';
 import 'package:firebase_core/firebase_core.dart';

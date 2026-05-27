@@ -267,26 +267,26 @@ const answerQuestionFlow = ai.defineFlow({
     name: "answerQuestion",
     inputSchema: z.object({
         question: z.string(),
+        system: z.string().optional(),
     }),
     outputSchema: z.string(),
     streamSchema: z.string(),
 }, async (input, { sendChunk }) => {
     const { stream, response } = await ai.generateStream({
+        system: input.system,
         prompt: input.question,
     });
-
     for await (const chunk of stream) {
         if (chunk.text) {
             sendChunk(chunk.text);
         }
     }
-
     const finalResponse = await response;
     return finalResponse.text;
 });
 
 exports.answerQuestion = onCallGenkit({
-    secrets: ['GOOGLE_API_KEY'],
+    secrets: ['GOOGLE_GENAI_API_KEY'],
     timeoutSeconds: 540,
 }, answerQuestionFlow);
 
