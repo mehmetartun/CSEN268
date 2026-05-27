@@ -1,142 +1,105 @@
-# Lecture 18 - Generative AI
+# Lecture 18 - 02 - Generative AI
 
-We add this function to index.js
+We now use GenKit to process streaming requests.
 
+## Cloud Functions
+
+### GenKit setup
+Using these packages in our `index.js`:
 ```javascript
-exports.getRecipe = onCall({
+const { googleAI } = require('@genkit-ai/google-genai');
+const { defineSecret } = require("firebase-functions/params");
+const { enableFirebaseTelemetry } = require('@genkit-ai/firebase');
+const { onCallGenkit } = require("firebase-functions/https");
+const { genkit, z } = require("genkit");
+```
+we define our **AI** model and enable Telemetry for AI Generation Monitoring in Firebase:
+```javascript
+const ai = genkit({
+    plugins: [googleAI()],
+    model: 'googleai/gemini-3.5-flash',
+});
+enableFirebaseTelemetry();
+```
+### Defining the Flow and Function
+```javascript
+const answerQuestionFlow = ai.defineFlow({
+    name: "answerQuestion",
+    inputSchema: z.object({
+        question: z.string(),
+    }),
+    outputSchema: z.string(),
+    streamSchema: z.string(),
+}, async (input, { sendChunk }) => {
+    const { stream, response } = await ai.generateStream({
+        prompt: input.question,
+    });
+
+    for await (const chunk of stream) {
+        if (chunk.text) {
+            sendChunk(chunk.text);
+        }
+    }
+
+    const finalResponse = await response;
+    return finalResponse.text;
+});
+
+exports.answerQuestion = onCallGenkit({
     secrets: ['GOOGLE_API_KEY'],
     timeoutSeconds: 540,
-}, async (request) => {
-    const schema = request.data.schema;
-    const languageModel = request.data.languageModel;
-    try {
-        const model = genAI.getGenerativeModel({
-            model: languageModel,
-            generationConfig: {
-                responseMimeType: 'application/json',
-                responseSchema: schema,
-            },
-        });
-
-        const safetySettings = [
-            {
-                category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-                threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-            },
-            {
-                category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-                threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-            },
-        ];
-        const prompt = request.data.prompt;
-        const result = await model.generateContent({
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            safetySettings,
-        });
-        const response = result.response;
-        if (!response || !response.candidates || !response.candidates[0].content) {
-            throw new Error('Invalid response from Gemini API.');
-        }
-        const jsonString = response.candidates[0].content.parts[0].text;
-        const recipeJson = JSON.parse(jsonString);
-        return recipeJson;
-    } catch (error) {
-        console.error('Error calling Gemini API:', error);
-        if (error.response) {
-            console.error('API Response Data:', error.response.data);
-        }
-        res.status(500).send(`Error processing request: ${error.message}.`);
-        return { 'error': error.message };
-    }
-});
+}, answerQuestionFlow);
 ```
 
-We call this from our app with a schema:
+## Flutter
+
+Add StreamBuilder to process the streaming response:
 ```dart
-static Map<String, dynamic> get schema {
-    Map<String, dynamic> schema = {
-      'type': 'OBJECT',
-      'properties': {
-        'cocktail_name': {'type': 'STRING'},
-        'description': {'type': 'STRING'},
-        'total_calories_in_kCal': {'type': 'NUMBER'},
-        'total_volume_in_mL': {'type': 'NUMBER'},
-        'history': {'type': 'STRING'},
-        'alcohol_by_volume_%': {'type': 'NUMBER'},
-        'serving_format': {'type': 'STRING'},
-        'total_carbohydrates_in_g': {'type': 'NUMBER'},
-        'total_protein_in_g': {'type': 'NUMBER'},
-        'total_fat_in_g': {'type': 'NUMBER'},
-        'ingredients': {
-          'type': 'ARRAY',
-          'items': {
-            'type': 'OBJECT',
-            'properties': {
-              'name': {'type': 'STRING'},
-              'quantity_in_mL': {'type': 'NUMBER'},
-              'carbohydrates_in_g': {'type': 'NUMBER'},
-              'protein_in_g': {'type': 'NUMBER'},
-              'fat_in_g': {'type': 'NUMBER'},
-              'calories_in_kCal': {'type': 'NUMBER'},
-              'alcohol_by_volume_%': {'type': 'NUMBER'},
-            },
-          },
+ final callable = FirebaseFunctions.instance.httpsCallable(
+        'answerQuestion',
+      );
+      final stream = callable.stream(<String, dynamic>{
+        'question': question,
+      });
+
+      _streamSubscription = stream.listen(
+        (event) {
+          if (event is Chunk) {
+            final data = event.partialData;
+            setState(() {
+              if (data is String) {
+                _streamingAnswer += data;
+              } else if (data is Map) {
+                _streamingAnswer += data['message'] ?? data.toString();
+              } else {
+                _streamingAnswer += data.toString();
+              }
+            });
+            _scrollToBottom();
+          }
         },
-        'instructions': {
-          'type': 'ARRAY',
-          'items': {
-            'type': 'OBJECT',
-            'properties': {
-              'step': {'type': 'NUMBER'},
-              'description': {'type': 'STRING'},
-            },
-          },
+        onError: (error) {
+          setState(() {
+            _streamingAnswer +=
+                "\n\n⚠️ Error during stream: ${error.toString()}";
+            _isStreaming = false;
+          });
+          _scrollToBottom();
         },
-      },
-      'required': [
-        'cocktail_name',
-        'ingredients',
-        'instructions',
-        'description',
-        'total_calories_in_kCal',
-        'total_volume_in_mL',
-        'history',
-      ],
-    };
-    return schema;
+        onDone: () {
+          setState(() {
+            _isStreaming = false;
+          });
+          _scrollToBottom();
+        },
+      );
+    } catch (e) {
+      setState(() {
+        _streamingAnswer = "Failed to initiate connection: $e";
+        _isStreaming = false;
+      });
+      _scrollToBottom();
+    }
   }
 ```
-
-which is attached to the `CocktailRecipe` object.
-
-Calling it from our app:
-```dart
-   HttpsCallableResult result = await getRecipeCall.call({
-        'schema': CocktailRecipe.schema,
-        'prompt': 'Get me the recipe of $cocktailName cocktail.',
-        'languageModel': 'gemini-2.5-flash',
-      });
-      recipe = CocktailRecipe.fromJson(_castMap(result.data));
-```
-
-Here the data coming back from the cloud function is not of `Map<String,dynamic>` type. Therefore we use this function to convert:
-```dart
-Map<String, dynamic> _castMap(Map<Object?, Object?> map) {
-  return map.map((key, value) {
-    if (value is Map<Object?, Object?>) {
-      return MapEntry(key as String, _castMap(value));
-    }
-    if (value is List) {
-      return MapEntry(
-        key as String,
-        value
-            .map(
-              (item) => item is Map<Object?, Object?> ? _castMap(item) : item,
-            )
-            .toList(),
-      );
-    }
-    return MapEntry(key as String, value);
-  });
-}
-```
+Here the stream coming back from the cloud function is incrementally shown on the page.

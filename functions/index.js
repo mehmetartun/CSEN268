@@ -16,6 +16,11 @@ const { getMessaging } = require("firebase-admin/messaging");
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { beforeUserCreated, beforeUserSignedIn } = require("firebase-functions/v2/identity");
 
+const { googleAI } = require('@genkit-ai/google-genai');
+const { defineSecret } = require("firebase-functions/params");
+const { enableFirebaseTelemetry } = require('@genkit-ai/firebase');
+const { onCallGenkit } = require("firebase-functions/https");
+const { genkit, z } = require("genkit");
 
 const { getStorage } = require("firebase-admin/storage");
 const { onObjectFinalized } = require("firebase-functions/storage");
@@ -24,7 +29,6 @@ const sharp = require("sharp");
 const fs = require("fs");
 const os = require("os");
 
-const { defineSecret } = require('firebase-functions/params');
 const { onInit } = require('firebase-functions/v2/core');
 
 const logger = require("firebase-functions/logger");
@@ -36,12 +40,23 @@ const {
     HarmCategory,
     HarmBlockThreshold,
 } = require('@google/generative-ai');
+
 const apiKey = defineSecret('GOOGLE_API_KEY');
 
 let genAI;
-onInit(() => {
-    genAI = new GoogleGenerativeAI(apiKey.value());
-})
+function getGenAI() {
+    if (!genAI) {
+        genAI = new GoogleGenerativeAI(apiKey.value());
+    }
+    return genAI;
+}
+
+const ai = genkit({
+    plugins: [googleAI()],
+    model: 'googleai/gemini-3.5-flash',
+});
+
+enableFirebaseTelemetry();
 
 
 // For cost control, you can set the maximum number of containers that can be
@@ -207,7 +222,7 @@ exports.getRecipe = onCall({
     const schema = request.data.schema;
     const languageModel = request.data.languageModel;
     try {
-        const model = genAI.getGenerativeModel({
+        const model = getGenAI().getGenerativeModel({
             model: languageModel,
             generationConfig: {
                 responseMimeType: 'application/json',
@@ -246,5 +261,36 @@ exports.getRecipe = onCall({
         return { 'error': error.message };
     }
 });
+
+
+const answerQuestionFlow = ai.defineFlow({
+    name: "answerQuestion",
+    inputSchema: z.object({
+        question: z.string(),
+    }),
+    outputSchema: z.string(),
+    streamSchema: z.string(),
+}, async (input, { sendChunk }) => {
+    const { stream, response } = await ai.generateStream({
+        prompt: input.question,
+    });
+
+    for await (const chunk of stream) {
+        if (chunk.text) {
+            sendChunk(chunk.text);
+        }
+    }
+
+    const finalResponse = await response;
+    return finalResponse.text;
+});
+
+exports.answerQuestion = onCallGenkit({
+    secrets: ['GOOGLE_API_KEY'],
+    timeoutSeconds: 540,
+}, answerQuestionFlow);
+
+
+
 
 

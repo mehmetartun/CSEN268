@@ -38,6 +38,9 @@ class _GenerativeAiPageState extends State<GenerativeAiPage> {
   );
   void getRecipe() async {
     try {
+      setState(() {
+        recipe = null;
+      });
       HttpsCallableResult result = await getRecipeCall.call({
         'schema': CocktailRecipe.schema,
         'prompt': 'Get me the recipe of $cocktailName cocktail.',
@@ -99,7 +102,6 @@ class _GenerativeAiPageState extends State<GenerativeAiPage> {
                             readOnly = true;
                           });
                           formKey.currentState!.save();
-
                           getRecipe();
                         }
                       },
@@ -109,6 +111,11 @@ class _GenerativeAiPageState extends State<GenerativeAiPage> {
                   ),
                 ),
               ),
+
+              if (recipe == null) ...[
+                Text("Getting Recipe"),
+                CircularProgressIndicator(),
+              ],
 
               if (recipe != null) ...[
                 Text(

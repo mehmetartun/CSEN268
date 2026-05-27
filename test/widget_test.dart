@@ -12,11 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+  // TestWidgetsFlutterBinding.ensureInitialized();
 
   Widget createWidget(Widget child) {
     return MaterialApp(home: Scaffold(body: child));
   }
+
+  testWidgets('Simple Widget', (tester) async {
+    await tester.pumpWidget(createWidget(Text("Hello World")));
+    expect(find.text("Hello World"), findsOneWidget);
+  }, semanticsEnabled: false);
 
   Widget createUserList() {
     return ListView(

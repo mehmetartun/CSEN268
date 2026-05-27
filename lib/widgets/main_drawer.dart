@@ -44,6 +44,13 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            title: const Text('Generative AI Streaming'),
+            onTap: () {
+              context.pop();
+              context.goNamed(MyNavigatorRoute.generativeAIStreaming.name);
+            },
+          ),
+          ListTile(
             title: const Text('Images'),
             onTap: () {
               context.pop();
