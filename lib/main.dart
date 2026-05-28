@@ -27,9 +27,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print(await FirebaseInstallations.instance.getId());
 
-  // FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  // FirebaseFunctions.instance.usyeFunctionsEmulator('localhost', 5001);
 
   final messaging = FirebaseMessaging.instance;
   // final settings = await messaging.requestPermission(

@@ -18,6 +18,10 @@ enum MyNavigatorRoute {
   functionsDemo("functionsDemo", "functionsDemo"),
   generativeAI("generativeAI", "generativeAI"),
   generativeAIStreaming("generativeAIStreaming", "generativeAIStreaming"),
+  generativeAIImageGeneration(
+    "generativeAIImageGeneration",
+    "generativeAIImageGeneration",
+  ),
   messaging("messaging", "messaging");
 
   const MyNavigatorRoute(this.path, this.name);
