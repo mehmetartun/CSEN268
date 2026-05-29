@@ -54,6 +54,6 @@ void main() {
       await tester.tap(find.byType(UserListTile).first);
       await tester.pumpAndSettle();
       expect(find.text('First0 Last0 added.'), findsOne);
-    });
+    }, semanticsEnabled: false);
   });
 }
