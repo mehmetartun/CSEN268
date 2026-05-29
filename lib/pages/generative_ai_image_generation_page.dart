@@ -307,6 +307,12 @@ class _GenerativeAiImageGenerationPageState
                           Image.memory(
                             generatedImageBytes!,
                             fit: BoxFit.contain,
+                            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                              if (frame != null) {
+                                scrollToBottom();
+                              }
+                              return child;
+                            },
                           ),
                           Padding(
                             padding: const EdgeInsets.all(12.0),
